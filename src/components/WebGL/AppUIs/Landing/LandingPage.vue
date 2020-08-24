@@ -12,6 +12,7 @@
         <GradientBG :pz="-20"></GradientBG>
         <!-- <FastFlame :lowres="true" :sy="1 * 2" :sx="3.6 * 2"></FastFlame> -->
       </GLArtCanvas>
+
       <div class="absolute course-banner-overlay top-0 left-0 w-full h-full flex flex-col justify-center items-center">
         <div class="text-white text-2xl lg:text-4xl">O3D-GEN3</div>
         <div class="text-white text-xl lg:text-3xl">3D App Framework</div>

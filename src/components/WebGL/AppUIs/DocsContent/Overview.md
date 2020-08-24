@@ -68,6 +68,6 @@ var cubeCamera = this.$parent.$parent.cubeCam
 - Support Large Scale Code Base
 - Small Core, Many Component Addons
 
-# Getting Started
+# Up Next
 
-[Code Structure](/docs/code-structure)
+[Code Walkthough](/docs/code-walkthrough)
