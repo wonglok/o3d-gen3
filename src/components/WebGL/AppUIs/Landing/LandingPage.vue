@@ -3,13 +3,14 @@
     <div class="course-banner relative">
       <GLArtCanvas :rounded="'0px 0px 0px 0px'" class="full" bgcolor="#000000">
         <!-- <MBLinesBloom></MBLinesBloom> -->
-        <Bloomer :settings="{
+        <!-- <Bloomer :settings="{
           exposure: 1.0,
           bloomStrength: 2,
-          bloomThreshold: 10.72 / 100.0,
+          bloomThreshold: 80.72 / 100.0,
           bloomRadius: 50.99 / 100.0 * 2
-        }"></Bloomer>
-        <FastFlame :lowres="true" :sy="1 * 2" :sx="3.6 * 2"></FastFlame>
+        }"></Bloomer> -->
+        <GradientBG :pz="-20"></GradientBG>
+        <!-- <FastFlame :lowres="true" :sy="1 * 2" :sx="3.6 * 2"></FastFlame> -->
       </GLArtCanvas>
       <div class="absolute course-banner-overlay top-0 left-0 w-full h-full flex flex-col justify-center items-center">
         <div class="text-white text-2xl lg:text-4xl">O3D-GEN3</div>
