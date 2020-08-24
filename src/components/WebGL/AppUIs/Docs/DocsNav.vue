@@ -3,7 +3,7 @@
     <GradientBG :pz="-20" v-if="camera"></GradientBG>
     <div class="absolute top-0 left-0 h-full w-full flex items-center justify-between">
       <div class="text-xl mx-4">
-        O3D-GEN3
+        <router-link to="/">O3D-GEN3</router-link>
       </div>
       <div class="text-xl mx-4">
         <img src="./img/menu.svg" @click="$emit('menu-toggle')" class="lg:hidden" alt="">
