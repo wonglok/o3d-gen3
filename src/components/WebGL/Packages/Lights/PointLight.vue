@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { PointLight, BoxBufferGeometry, MeshBasicMaterial, Color, Mesh } from 'three'
 
 export default {
   name: 'PointLight',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     helper: {
       default: false

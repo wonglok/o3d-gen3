@@ -4,14 +4,14 @@
 
 <script>
 // import { WoozyMaterial } from '../../Core/WoozyMaterial'
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { ShaderCube } from '../Materials/ShaderCube'
 import { loadFBX } from '../../Core/loadFBX'
 import { loadTexture } from '../../Core/loadTexture'
 import { MeshMatcapMaterial, DoubleSide } from 'three'
 
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     opacity: {
       default: 1

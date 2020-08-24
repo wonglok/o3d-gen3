@@ -39,7 +39,7 @@ export default {
     },
     NS: {
       default () {
-        return  'O3DG2-EDITOR-CODE-TXT-' + require('raw-loader!./defaultcode-basic.txt').default.length + require('raw-loader!./defaultcode-basic.txt').default.slice(0, 300)
+        return  'O3DNode-EDITOR-CODE-TXT-' + require('raw-loader!./defaultcode-basic.txt').default.length + require('raw-loader!./defaultcode-basic.txt').default.slice(0, 300)
       }
     }
   },
@@ -63,7 +63,7 @@ export default {
       needsRunSave: false,
       styleHTML: '',
       rr: Math.random(),
-      // NS: 'O3DG2-EDITOR-TREE-CODE-SPACESHIP',
+      // NS: 'O3DNode-EDITOR-TREE-CODE-SPACESHIP',
       current: {
         vueCode: ' '
       },
@@ -172,7 +172,7 @@ export default {
       //   methods: {},
       //   beforeDestroy() {
       //   },
-      //   mixins: [require('../../Core/O3DG2.js').O3DG2],
+      //   mixins: [require('../../Core/O3DNode.js').O3DNode],
       // }
 
       let i = 0

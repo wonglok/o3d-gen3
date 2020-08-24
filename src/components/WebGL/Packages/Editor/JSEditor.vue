@@ -63,7 +63,7 @@ export default {
       needsRunSave: false,
       styleHTML: '',
       rr: Math.random(),
-      // NS: 'O3DG2-EDITOR-TREE-CODE-SPACESHIP',
+      // NS: 'O3DNode-EDITOR-TREE-CODE-SPACESHIP',
       current: {
         vueCode: ' '
       },

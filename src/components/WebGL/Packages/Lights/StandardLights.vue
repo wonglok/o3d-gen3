@@ -42,7 +42,7 @@
 <script>
 export default {
   mixins: [
-    require('../../Core/O3DG2.js').O3DG2
+    require('../../Core/O3DNode.js').O3DNode
   ]
 }
 </script>

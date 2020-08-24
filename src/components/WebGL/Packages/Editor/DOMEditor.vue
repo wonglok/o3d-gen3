@@ -44,7 +44,7 @@ export default {
     },
     NS: {
       default () {
-        return  'O3DG2-EDITOR-DOM-TXT-' + require('raw-loader!./defaultcode-js.txt').default.length + require('raw-loader!./defaultcode-js.txt').default.slice(0, 300)
+        return  'O3DNode-EDITOR-DOM-TXT-' + require('raw-loader!./defaultcode-js.txt').default.length + require('raw-loader!./defaultcode-js.txt').default.slice(0, 300)
       }
     }
   },
@@ -68,7 +68,7 @@ export default {
       needsRunSave: false,
       styleHTML: '',
       rr: Math.random(),
-      // NS: 'O3DG2-EDITOR-TREE-CODE-SPACESHIP',
+      // NS: 'O3DNode-EDITOR-TREE-CODE-SPACESHIP',
       current: {
         vueCode: ' '
       },

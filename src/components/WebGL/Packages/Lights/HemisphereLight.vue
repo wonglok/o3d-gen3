@@ -5,11 +5,11 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { BoxBufferGeometry, MeshBasicMaterial, Color, Mesh } from 'three'
 export default {
   name: 'HemiSphere',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     intensity: {
       default: 3.6

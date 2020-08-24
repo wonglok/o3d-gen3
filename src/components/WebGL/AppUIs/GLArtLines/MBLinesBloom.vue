@@ -5,13 +5,13 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { PlaneBufferGeometry, Vector2, Mesh, RawShaderMaterial, CanvasTexture } from 'three'
 // import { Refractor } from 'three/examples/jsm/objects/Refractor'
 // import { FastBlurShader } from './FastBlurShader'
 export default {
   name: 'GradientBG',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     image: {}
   },

@@ -5,12 +5,12 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { Light } from 'three'
 
 export default {
   name: 'Light',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     intensity: {
       defult: 3

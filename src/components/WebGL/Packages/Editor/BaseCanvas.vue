@@ -17,7 +17,7 @@ import { Scene } from 'three'
 // import { ShaderCubeChrome } from '../Core/ShaderCubeChrome'
 // import { Actions } from '../GLContent/Game/Actions'
 // import { CharNPC } from '../GLContent/Game/CharNPC'
-// import { getScreen } from '../Core/O3DG2'
+// import { getScreen } from '../Core/O3DNode'
 // import { makeScroller } from '../Core/makeScroller'
 // import { ShaderCubeChromatics } from '../Core/ShaderCubeChromatics'
 

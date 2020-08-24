@@ -1,4 +1,4 @@
-import { O3DG2 } from './O3DG2'
+import { O3DNode } from './O3DNode'
 import { WebGLRenderer } from 'three'
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
@@ -6,7 +6,7 @@ import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
 import 'requestidlecallback'
 export const RenderRootGrid = {
   name: 'RenderRootGrid',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   components: {
     O3D: require('../Core/O3D.vue').default
   },

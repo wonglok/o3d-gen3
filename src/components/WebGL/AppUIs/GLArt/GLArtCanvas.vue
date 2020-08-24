@@ -40,7 +40,7 @@
 <script>
 import { Scene, Color } from 'three'
 import { PCamera } from '../../Core/PCamera'
-import { getScreen } from '../../Core/O3DG2'
+import { getScreen } from '../../Core/O3DNode'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 
 export default {

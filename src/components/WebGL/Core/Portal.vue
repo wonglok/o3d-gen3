@@ -6,9 +6,9 @@
 
 <script>
 import { Scene, WebGLRenderTarget, PerspectiveCamera } from 'three'
-import { O3DG2 } from '../Core/O3DG2'
+import { O3DNode } from '../Core/O3DNode'
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     width: {
       default: 20,

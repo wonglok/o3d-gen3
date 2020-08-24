@@ -3,14 +3,14 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { loadGLTF } from '../../Core/loadGLTF'
 // import { ShaderCube } from '../../Core/ShaderCube'
 import { MeshMatcapMaterial, DoubleSide } from 'three'
 import { loadTexture } from '../../Core/loadTexture'
 
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   data () {
     return {
       layouts: {}

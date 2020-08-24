@@ -4,9 +4,9 @@
 
 <script>
 import { Mesh, MeshBasicMaterial, PlaneBufferGeometry } from 'three'
-import { O3DG2 } from '../Core/O3DG2.js'
+import { O3DNode } from '../Core/O3DNode.js'
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
   },
   data () {

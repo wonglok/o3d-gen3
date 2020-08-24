@@ -738,6 +738,6 @@ module.exports = {
   },
   corePlugins: {},
   plugins: [
-    require('tailwindcss-neumorphism')
+    // require('tailwindcss-neumorphism')
   ],
 }

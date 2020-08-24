@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { EnergyArt } from './EnergyArt'
 export default {
   props: {
@@ -13,7 +13,7 @@ export default {
       default: false
     }
   },
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   methods: {
     main () {
       let resX = 256

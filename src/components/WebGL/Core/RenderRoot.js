@@ -1,4 +1,4 @@
-import { O3DG2 } from './O3DG2'
+import { O3DNode } from './O3DNode'
 import { WebGLRenderer } from 'three'
 import { CSS2DRenderer } from 'three/examples/jsm/renderers/CSS2DRenderer.js'
 import { CSS3DRenderer } from 'three/examples/jsm/renderers/CSS3DRenderer.js'
@@ -46,10 +46,13 @@ export function allInViewPort(el) {
 
 export const RenderRoot = {
   name: 'RenderRoot',
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     dpi: {
       default: window.devicePixelRatio || 2
+    },
+    suspendRender: {
+      default: false
     }
   },
   components: {
@@ -86,6 +89,10 @@ export const RenderRoot = {
       let rAFID = 0
       let runTasks = async () => {
         rAFID = window.requestAnimationFrame(runTasks)
+
+        if (this.suspendRender) {
+          return
+        }
 
         if (this.needsToCheckViewPort) {
           this.canRun = anyPartInViewPort(this.$el)

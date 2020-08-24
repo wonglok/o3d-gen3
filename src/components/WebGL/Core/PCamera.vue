@@ -8,7 +8,7 @@ import { PCamera } from './PCamera'
 
 export default {
   mixins: [
-    require('./O3DG2').O3DG2
+    require('./O3DNode').O3DNode
   ],
   async mounted () {
     this.renderRoot.camera = new PCamera({ element: this.element, onResize: this.onResize })

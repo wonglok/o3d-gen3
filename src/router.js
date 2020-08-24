@@ -1,4 +1,5 @@
 import VueRouter from 'vue-router'
+import { MenuDocsData } from './components/WebGL/AppUIs/Docs/MenuListData'
 
 export const routes = [
   {
@@ -7,12 +8,13 @@ export const routes = [
   },
   {
     path: '/docs',
-    component: () => import('./components/WebGL/AppUIs/QuickStart/DocsLayout.vue'),
+    component: () => import('./components/WebGL/AppUIs/Docs/DocsLayout.vue'),
     children: [
-      {
-        path: 'quick-start',
-        component: () => import('./components/WebGL/AppUIs/QuickStart/QuickStart.vue'),
-      }
+      // {
+      //   path: 'quick-start',
+      //   component: () => import('./components/WebGL/AppUIs/DocsContent/QuickStart.vue'),
+      // },
+      ...MenuDocsData
     ]
   },
   {

@@ -3,9 +3,9 @@
 </template>
 
 <script>
-import { O3DG2 } from './O3DG2'
+import { O3DNode } from './O3DNode'
 export default {
-  mixins: [O3DG2]
+  mixins: [O3DNode]
 }
 </script>
 

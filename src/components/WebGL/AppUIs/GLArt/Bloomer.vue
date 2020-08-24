@@ -8,7 +8,7 @@
 
 
 */
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 import { Bloomer } from './Bloomer'
 export default {
   props: {
@@ -17,7 +17,7 @@ export default {
     }
   },
   mixins: [
-    O3DG2
+    O3DNode
   ],
   async mounted () {
     await this.onEnsure(() => this.ctx.renderer && this.ctx.camera)

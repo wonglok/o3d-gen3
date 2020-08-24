@@ -184,14 +184,11 @@ export const loadDeps = async (depMap) => {
   }
 }
 
-export const O3DG2 = {
+export const O3DNode = {
   mixins: [
     require('./O3DVue').O3DVue
   ],
   props: {
-    editor: {
-      default: false
-    },
     px: {
     },
     py: {
@@ -421,4 +418,4 @@ export const O3DG2 = {
   }
 }
 
-export default O3DG2
+export default O3DNode

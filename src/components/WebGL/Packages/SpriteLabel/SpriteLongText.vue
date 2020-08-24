@@ -7,14 +7,14 @@
 </template>
 
 <script>
-import { O3DG2 } from '../../Core/O3DG2'
+import { O3DNode } from '../../Core/O3DNode'
 // import rasterizehtml from 'rasterizehtml/dist/rasterizeHTML.allinone'
 import TextCanvas from  'text-canvas'
 import { CanvasTexture, Sprite, SpriteMaterial, DoubleSide, Object3D } from 'three'
 // import { BoxBufferGeometry, MeshBasicMaterial, Mesh } from 'three'
 
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   props: {
     text: {
       default: 'Diamond Heart'

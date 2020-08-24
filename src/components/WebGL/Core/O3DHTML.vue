@@ -3,11 +3,11 @@
 </template>
 
 <script>
-import { O3DG2 } from './O3DG2'
+import { O3DNode } from './O3DNode'
 import { CSS3DObject } from 'three/examples/jsm/renderers/CSS3DRenderer'
 
 export default {
-  mixins: [O3DG2],
+  mixins: [O3DNode],
   mounted () {
     this.htmlLabel = new CSS3DObject(this.$el)
     this.o3d.add(this.htmlLabel)
