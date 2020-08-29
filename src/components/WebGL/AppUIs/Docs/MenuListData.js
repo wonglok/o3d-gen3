@@ -16,6 +16,12 @@ export const MenuDocsData = [
     name: 'Code Walkthrouh',
     path: '/docs/code-walkthrough',
     component: () => import('../DocsContent/CodeStructure.vue')
+  },
+  {
+    type: 'router',
+    name: 'Virtual Room',
+    path: '/docs/event-space',
+    component: () => import('../EventSpace/EventSpace.vue')
   }
 ]
 export const MenuListData = [

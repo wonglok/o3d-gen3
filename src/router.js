@@ -7,6 +7,10 @@ export const routes = [
     component: () => import('./components/WebGL/AppUIs/Landing/LandingPage.vue')
   },
   {
+    path: '/room',
+    component: () => import('./components/WebGL/AppUIs/EventSpace/EventSpace.vue')
+  },
+  {
     path: '/docs',
     component: () => import('./components/WebGL/AppUIs/Docs/DocsLayout.vue'),
     children: [
