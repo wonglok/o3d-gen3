@@ -1,11 +1,11 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, BoxBufferGeometry, MeshBasicMaterial, Mesh, Vector3, Quaternion, Euler } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, Euler } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
 import { KeyState } from './KeyState'
 
 export class CamLock {
-  constructor ({ target, onLoop, camera }) {
+  constructor ({ target, camera }) {
     target.add(camera)
     camera.position.z = -30
     camera.position.y = 10
@@ -660,11 +660,11 @@ export class CharacterControl {
     let size = this.base.size
     let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
     let squareCharBox = makeSquareShape(size.x, size.y, size.z)
-    let mesh = new Mesh(new BoxBufferGeometry(size.x * 2.0, size.y * 2.0, size.z * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
     let targetO3 = this.base.o3d
     // targetO3.rotation.x = Math.PI * 0.5
 
-    targetO3.add(mesh)
+    // let mesh = new Mesh(new BoxBufferGeometry(size.x * 2.0, size.y * 2.0, size.z * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
+    // targetO3.add(mesh)
     targetO3.position.x = 0
     targetO3.position.y = size.y + 10
     targetO3.position.z = 0
@@ -674,8 +674,8 @@ export class CharacterControl {
     startTransform.setRotation(new Ammo.btQuaternion(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w))
 
     var shape = squareCharBox
-    var mass = 2;
-    var localInertia = new Ammo.btVector3(0, 0, 0);
+    var mass = 1;
+    var localInertia = new Ammo.btVector3(0, 1, 0);
     shape.calculateLocalInertia(mass, localInertia);
 
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
@@ -689,17 +689,28 @@ export class CharacterControl {
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
     let angularFactor = new Ammo.btVector3(0, 0, 0)
+    // let linearFactor = new Ammo.btVector3(1, 1, 1)
 
-    body.setDamping(0.98, 0.98)
+    body.setDamping(0.99, 0.99)
 
-    // body.setCcdMotionThreshold(1e-7)
-    // body.setCcdSweptSphereRadius(0.50)
+    body.setCcdMotionThreshold(1e-7)
+    body.setCcdSweptSphereRadius(0.50)
+
     // let steer = new Object3D()
     let v3 = new Vector3()
+    let speed = 7
     // let qq = new Quaternion()
     this.base.onLoop(() => {
+      if (this.keys.isDownAny) {
+        body.activate()
+      }
+      // linearFactor.setValue(1, 1, 1)
+      // body.setLinearFactor(linearFactor)
+
       angularFactor.setValue(0, 0, 0)
-      console.table(JSON.stringify(this.keys))
+      body.setAngularFactor(angularFactor)
+
+      // console.table(JSON.stringify(this.keys))
 
       // body.setAngularFactor(angularFactor)
       // if (this.keys.isDownAny) {
@@ -734,7 +745,7 @@ export class CharacterControl {
       if (this.keys.forward) {
         v3.x = 0
         v3.y = 0
-        v3.z = 5
+        v3.z = speed
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * 0.0
@@ -747,7 +758,7 @@ export class CharacterControl {
       if (this.keys.backward) {
         v3.x = 0
         v3.y = 0
-        v3.z = 5
+        v3.z = speed
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * 1.0
@@ -760,13 +771,9 @@ export class CharacterControl {
       if (this.keys.left) {
         v3.x = 0
         v3.y = 0
-        v3.z = 5
+        v3.z = speed
 
-        let flip = 1
-
-        if (targetO3.quaternion.w < 0) {
-          flip = -1
-        }
+        let flip = targetO3.quaternion.w
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * 0.5 * flip
@@ -780,13 +787,9 @@ export class CharacterControl {
       if (this.keys.right) {
         v3.x = 0
         v3.y = 0
-        v3.z = 5
+        v3.z = speed
 
-        let flip = 1
-
-        if (targetO3.quaternion.w < 0) {
-          flip = -1
-        }
+        let flip = targetO3.quaternion.w
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * -0.5 * flip
@@ -824,12 +827,16 @@ export class CharacterControl {
       // // }
 
       if (this.keys.space) {
-        velocity.setValue(0, 20, 0)
-        body.applyCentralImpulse(velocity)
+        // body.setDamping(0.97, 0.97)
         setTimeout(() => {
-          velocity.setValue(0, -20, 0)
+          velocity.setValue(0, 20, 0)
           body.applyCentralImpulse(velocity)
-        }, 400)
+
+          setTimeout(() => {
+            velocity.setValue(0, -20, 0)
+            body.applyCentralImpulse(velocity)
+          }, 450)
+        }, 450)
       }
 
       if (this.keys.turnLeft) {
@@ -849,6 +856,11 @@ export class CharacterControl {
 
       // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)
     })
+
+    setInterval(() => {
+      velocity.setValue(0, -20, 0)
+      body.applyCentralImpulse(velocity)
+    }, 450)
 
     targetO3.userData.isChar = true
     body.updaterTarget = targetO3
@@ -963,12 +975,12 @@ export class PhysicsCharacter extends EventDispatcher {
     this.done = this.setup()
   }
   async setup () {
-    // this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
-    // this.scene = this.glb.scene
-    // this.scene.position.y = this.size.y * -1
-    // this.o3d.add(this.scene)
+    this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+    this.scene = this.glb.scene
+    this.scene.position.y = this.size.y * -1
+    this.o3d.add(this.scene)
 
-    // this.character = new Character({ actor: this.scene, base: this })
+    this.character = new Character({ actor: this.scene, base: this })
     this.control = new CharacterControl({ base: this })
   }
 }

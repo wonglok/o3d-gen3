@@ -16,6 +16,7 @@ import { loadFBX } from '../../Core/loadFBX'
 import { loadTexture } from '../../Core/loadTexture'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { RayPlay } from '../../Core/RayPlay'
+// import¿ _ from 'lodash'
 // import { onEnsure } from '../../Core/O3DNode'
 // import { KeyState } from './KeyState'
 
@@ -71,7 +72,7 @@ export default {
       let margin = 0.05
 
       // let transformAux1 = new Ammo.btTransform();
-			// let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
+      // let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
 
 
 
@@ -121,6 +122,8 @@ export default {
         var myMotionState = new Ammo.btDefaultMotionState(groundTransform);
         var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
         var body = new Ammo.btRigidBody(rbInfo);
+
+        body.isWorld = true
 
         // body.visual = visual
         body.updaterTarget = target || visual
@@ -192,6 +195,8 @@ export default {
           onClean: this.onClean
         })
 
+        physicsChar.body.isChar = true
+
         bodies.push(physicsChar.body)
         dynamicsWorld.addRigidBody(physicsChar.body)
 
@@ -199,6 +204,49 @@ export default {
           var deltaTime = clock.getDelta();
           dynamicsWorld.stepSimulation(deltaTime, 10);
         })
+
+        let miniJump = new Ammo.btVector3(0, 1, 0)
+        this.onLoop(() => {
+          for (let i = 0, il = dispatcher.getNumManifolds(); i < il; i++) {
+            const contactManifold = dispatcher.getManifoldByIndexInternal(i)
+            // const key = Object.keys(contactManifold.getBody0())[0]
+
+            // @ts-ignore
+            const body0 = Ammo.castObject(contactManifold.getBody0(), Ammo.btRigidBody)
+            // @ts-ignore
+            const body1 = Ammo.castObject(contactManifold.getBody1(), Ammo.btRigidBody)
+
+            // do not check collision between 2 unnamed objects
+            // (fragments do not have a name, for example)
+            if (body0.name === '' && body1.name === '') continue
+
+            let character = false
+            let world = false
+            // // @ts-ignore
+            // const ptr0 = body0[key]
+            // // @ts-ignore
+            // const ptr1 = body1[key]
+            if ((body0.isChar && body1.isWorld)) {
+              character = body0
+              world = body1
+            }
+            if ((body1.isChar && body0.isWorld)) {
+              character = body1
+              world = body0
+            }
+            if (character && world) {
+              let name = world.updaterTarget.name
+
+              if (name === 'Cube006') {
+                character.activate()
+                character.applyCentralImpulse(miniJump)
+              }
+              // console.log(world.updaterTarget.name)
+            }
+          }
+        })
+
+
       })
 
       // let makeChar = () => {
@@ -370,9 +418,9 @@ export default {
 
         fbx.traverse((item) => {
           if (item.isMesh) {
-            // this.rayplay.add(item, () => {
-            //   console.log(item.name)
-            // })
+            this.rayplay.add(item, () => {
+              console.log(item.name)
+            })
 
             // if (this.ctx.chromaMatCap) {
             //   item.material =  this.ctx.chromaMatCap.out.material
