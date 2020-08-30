@@ -727,7 +727,7 @@ export class CharacterControl {
 
       // body.setLinearVelocity(velocity)
 
-      console.log(targetO3.rotation.y)
+      // console.log(targetO3.rotation.y)
       if (this.keys.forward) {
         v3.x = 0
         v3.y = 0
@@ -735,6 +735,47 @@ export class CharacterControl {
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * 0.0
+        v3.applyEuler(e3)
+
+        velocity.setValue(v3.x, 0, v3.z)
+        body.applyCentralImpulse(velocity)
+      }
+
+      if (this.keys.backward) {
+        v3.x = 0
+        v3.y = 0
+        v3.z = 5
+
+        let e3 = new Euler().copy(targetO3.rotation)
+        e3.y += Math.PI * 1.0
+        v3.applyEuler(e3)
+
+        velocity.setValue(v3.x, 0, v3.z)
+        body.applyCentralImpulse(velocity)
+      }
+
+
+      if (this.keys.left) {
+        v3.x = 0
+        v3.y = 0
+        v3.z = 5
+
+        let e3 = new Euler().copy(targetO3.rotation)
+        e3.y += Math.PI * 0.5
+        v3.applyEuler(e3)
+
+        velocity.setValue(v3.x, 0, v3.z)
+        body.applyCentralImpulse(velocity)
+      }
+
+
+      if (this.keys.right) {
+        v3.x = 0
+        v3.y = 0
+        v3.z = 5
+
+        let e3 = new Euler().copy(targetO3.rotation)
+        e3.y += Math.PI * -0.5
         v3.applyEuler(e3)
 
         velocity.setValue(v3.x, 0, v3.z)
@@ -768,25 +809,29 @@ export class CharacterControl {
       // //   body.applyCentralImpulse(velocity)
       // // }
 
-      // if (this.keys.space) {
-      //   velocity.setValue(0, 10, 0)
-      //   body.applyCentralImpulse(velocity)
-      // }
+      if (this.keys.space) {
+        velocity.setValue(0, 20, 0)
+        body.applyCentralImpulse(velocity)
+        setTimeout(() => {
+          velocity.setValue(0, -20, 0)
+          body.applyCentralImpulse(velocity)
+        }, 400)
+      }
 
-      // if (this.keys.turnLeft) {
-      //   angularVelocity.setValue(0, 3, 0)
-      //   body.setAngularVelocity(angularVelocity)
+      if (this.keys.turnLeft) {
+        angularVelocity.setValue(0, 1.5, 0)
+        body.setAngularVelocity(angularVelocity)
 
-      //   angularFactor.setValue(0, 1, 0)
-      //   body.setAngularFactor(angularFactor)
-      // }
-      // if (this.keys.turnRight) {
-      //   angularVelocity.setValue(0, -3, 0)
-      //   body.setAngularVelocity(angularVelocity)
+        angularFactor.setValue(0, 1, 0)
+        body.setAngularFactor(angularFactor)
+      }
+      if (this.keys.turnRight) {
+        angularVelocity.setValue(0, -1.5, 0)
+        body.setAngularVelocity(angularVelocity)
 
-      //   angularFactor.setValue(0, 1, 0)
-      //   body.setAngularFactor(angularFactor)
-      // }
+        angularFactor.setValue(0, 1, 0)
+        body.setAngularFactor(angularFactor)
+      }
 
       // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)
     })
