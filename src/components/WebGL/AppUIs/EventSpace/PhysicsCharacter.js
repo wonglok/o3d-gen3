@@ -680,6 +680,7 @@ export class CharacterControl {
     var mass = 1;
     var localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
+    shape.setMargin(10)
 
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
@@ -693,7 +694,6 @@ export class CharacterControl {
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
     let angularFactor = new Ammo.btVector3(0, 0, 0)
     // let linearFactor = new Ammo.btVector3(1, 1, 1)
-    shape.setMargin(10)
 
     body.setDamping(0.98, 0.98)
     // body.setMassProps(1, new Ammo.btVector3(1, 1, 1))
