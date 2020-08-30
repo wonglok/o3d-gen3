@@ -1,4 +1,4 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, Euler } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, Euler, Quaternion } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
@@ -782,7 +782,7 @@ export class CharacterControl {
     // targetO3.position.x = 0
     targetO3.position.y = size.y + 10
     targetO3.position.fromArray(this.base.initPos)
-    targetO3.rotation.y = Math.PI + 0.000001
+    targetO3.rotation.y = Math.PI
 
     // targetO3.position.z = 0
 
@@ -838,16 +838,24 @@ export class CharacterControl {
       //   body.setDamping(0.98, 0.98)
       // }
 
-      body.getMotionState().getWorldTransform(startTransform)
-      var originCopy = startTransform.getOrigin();
-      var rotCopy = startTransform.getRotation()
+      // body.getMotionState().getWorldTransform(startTransform)
+      // var originCopy = startTransform.getOrigin();
+      // var rotCopy = startTransform.getRotation()
 
-      origin3.setValue(originCopy.x(), originCopy.y(), originCopy.z())
-      quaternion.setValue(rotCopy.x(), rotCopy.y(), rotCopy.z(), rotCopy.w())
-      startTransform.setIdentity();
-      startTransform.setOrigin(origin3)
-      startTransform.setRotation(quaternion)
-      body.getMotionState().setWorldTransform(startTransform)
+      // origin3.setValue(originCopy.x(), originCopy.y(), originCopy.z())
+      // quaternion.setValue(rotCopy.x(), rotCopy.y(), rotCopy.z(), rotCopy.w())
+
+      // targetO3.quaternion.copy({
+      //   x: rotCopy.x(),
+      //   y: rotCopy.y(),
+      //   z: rotCopy.z(),
+      //   w: rotCopy.w()
+      // })
+
+      // startTransform.setIdentity();
+      // startTransform.setOrigin(origin3)
+      // startTransform.setRotation(quaternion)
+      // body.getMotionState().setWorldTransform(startTransform)
 
       // targetO3.getWorldDirection(dir)
 
@@ -861,9 +869,11 @@ export class CharacterControl {
         v3.y = 0
         v3.z = speed
 
-        let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * 0.0
-        v3.applyEuler(e3)
+        // let e3 = new Euler().copy(targetO3.rotation)
+        // e3.y += Math.PI * 0.0
+        // v3.applyEuler(e3)
+
+        v3.applyQuaternion(targetO3.quaternion)
 
         velocity.setValue(v3.x, 0, v3.z)
         body.applyCentralImpulse(velocity)
@@ -872,29 +882,36 @@ export class CharacterControl {
       if (this.keys.backward) {
         v3.x = 0
         v3.y = 0
-        v3.z = speed
+        v3.z = -speed
 
-        let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * 1.0
-        v3.applyEuler(e3)
+        // let e3 = new Euler().copy(targetO3.rotation)
+        // // e3.y += Math.PI * 1.0
+        // v3.applyEuler(e3)
+
+        v3.applyQuaternion(targetO3.quaternion)
 
         velocity.setValue(v3.x, 0, v3.z)
         body.applyCentralImpulse(velocity)
       }
 
       if (this.keys.left) {
-        v3.x = 0
+        v3.x = speed
         v3.y = 0
-        v3.z = speed
+        v3.z = 0
 
-        let flip = 1
-        if (targetO3.quaternion.w < 0) {
-          flip = -1
-        }
+        // let flip = 1
+        // console.log(Math.abs(targetO3.quaternion.w))
 
-        let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * 0.5 * flip
-        v3.applyEuler(e3)
+        // if (Math.abs(targetO3.quaternion.w) < 0.5) {
+        //   flip = -1
+        // }
+
+        // let q3 = new Quaternion().copy(targetO3.quaternion)
+        v3.applyQuaternion(targetO3.quaternion)
+
+        // let e3 = new Euler().copy(targetO3.rotation)
+        // e3.y += Math.PI * 0.499 * flip
+        // v3.applyEuler(e3)
 
         velocity.setValue(v3.x, 0, v3.z)
         body.applyCentralImpulse(velocity)
@@ -902,18 +919,23 @@ export class CharacterControl {
 
 
       if (this.keys.right) {
-        v3.x = 0
+        v3.x = -speed
         v3.y = 0
-        v3.z = speed
+        v3.z = 0
 
-        let flip = 1
-        if (targetO3.quaternion.w < 0) {
-          flip = -1
-        }
+        // let flip = 1
+        // console.log(Math.abs(targetO3.quaternion.w))
 
-        let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * -0.5 * flip
-        v3.applyEuler(e3)
+        // if (Math.abs(targetO3.quaternion.w) < 0.5) {
+        //   flip = -1
+        // }
+
+        // let q3 = new Quaternion().copy(targetO3.quaternion)
+        v3.applyQuaternion(targetO3.quaternion)
+
+        // let e3 = new Euler().copy(targetO3.rotation)
+        // e3.y += Math.PI * -0.499 * flip
+        // v3.applyEuler(e3)
 
         velocity.setValue(v3.x, 0, v3.z)
         body.applyCentralImpulse(velocity)
@@ -967,6 +989,8 @@ export class CharacterControl {
 
         angularFactor.setValue(0, 1, 0)
         body.setAngularFactor(angularFactor)
+
+        // console.log(Math.abs(targetO3.quaternion.w))
       }
       if (this.keys.turnRight) {
         angularVelocity.setValue(0, -1.5, 0)
@@ -974,6 +998,8 @@ export class CharacterControl {
 
         angularFactor.setValue(0, 1, 0)
         body.setAngularFactor(angularFactor)
+
+        // console.log(Math.abs(targetO3.quaternion.w))
       }
 
       // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)

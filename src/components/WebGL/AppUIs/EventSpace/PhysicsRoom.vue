@@ -151,7 +151,7 @@ export default {
 
       let bodies = []
       this.bodies = bodies
-      let margin = 0.05
+      let margin = 0.1
 
       // let transformAux1 = new Ammo.btTransform();
       // let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
@@ -162,6 +162,7 @@ export default {
         bodies.forEach(body => {
           body.getMotionState().getWorldTransform(transform);
           var origin = transform.getOrigin();
+
           let pos = {
             x: origin.x(),
             y: origin.y(),
@@ -175,6 +176,7 @@ export default {
             z: rotation.z(),
             w: rotation.w()
           }
+
           if (body.updaterTarget) {
             body.updaterTarget.position.copy(pos)
             body.updaterTarget.quaternion.copy(rot)
@@ -293,7 +295,7 @@ export default {
           this.camlocker.mode = 'chase'
         })
 
-        physicsChar.body.isChar = true
+        // physicsChar.body.isChar = true
 
         bodies.push(physicsChar.body)
         dynamicsWorld.addRigidBody(physicsChar.body)
