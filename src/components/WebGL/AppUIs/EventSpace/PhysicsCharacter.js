@@ -17,18 +17,18 @@ export class CamLock {
       this.canRun = false
     })
 
-    let selected = target
+    let head = target
     target.traverse((item) => {
-      console.log(item.name)
+      // console.log(item.name)
       if (item.name === 'mixamorigHead') {
-        selected = item
+        head = item
       }
     })
-    this.run({ selected })
+    this.run({ head })
   }
-  run ({ selected }) {
+  run ({ head }) {
     let lookTarget = new Object3D()
-    selected.add(lookTarget)
+    head.add(lookTarget)
 
     let charLookAtTargetV3Last = new Vector3()
     let charLookAtTargetV3Temp = new Vector3()
@@ -315,7 +315,7 @@ export class CharActions {
     idle.repetitions = Infinity
     idle.play()
 
-    this.base.moodType = 'peaceful'
+    this.base.moodType = 'fighting'
 
     let toggleFightMode = () => {
       let last = idle
@@ -731,8 +731,8 @@ export class CharacterControl {
     // targetO3.add(mesh)
     // targetO3.position.x = 0
     targetO3.position.y = size.y + 10
-    targetO3.position.fromArray([126.0895767211914, 100, 364.65924072265625])
-    targetO3.rotation.y = Math.PI
+    targetO3.position.fromArray(this.base.initPos)
+    targetO3.rotation.y = Math.PI + 0.000001
 
     // targetO3.position.z = 0
 
@@ -778,8 +778,6 @@ export class CharacterControl {
 
       angularFactor.setValue(0, 0, 0)
       body.setAngularFactor(angularFactor)
-
-
 
       // console.table(JSON.stringify(this.keys))
 
@@ -1021,7 +1019,7 @@ export class Character {
           item.material.roughnessMap.encoding = LinearEncoding
         }
         // item.material.toneMapped = true
-        item.material.transbase = true
+        item.material.transparent = true
         item.frustumCulled = false
       }
     })
@@ -1036,6 +1034,8 @@ export class PhysicsCharacter extends EventDispatcher {
       y: 13,
       z: 13 / 2,
     }
+    this.initPos = [126.0895767211914, 100, 364.65924072265625]
+    // this.initPos = [0.0, 50, 0.0]
     this.onLoop = onLoop
     this.onResize = onResize
     this.Ammo = Ammo
@@ -1044,7 +1044,7 @@ export class PhysicsCharacter extends EventDispatcher {
     this.done = this.setup()
   }
   async setup () {
-    this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+    this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
     this.scene = this.glb.scene
     this.scene.position.y = this.size.y * -1
     this.o3d.add(this.scene)

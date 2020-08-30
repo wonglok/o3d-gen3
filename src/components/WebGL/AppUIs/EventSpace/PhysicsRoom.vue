@@ -38,6 +38,7 @@ export default {
     init () {
       this.scene = new Scene()
       this.camera = new PCamera({ element: this.element, onResize: this.onResize })
+
       // this.camera.position.z = 100
       // this.camera.position.y = 200
       // this.camera.position.x = 300
@@ -72,8 +73,6 @@ export default {
 
       // let transformAux1 = new Ammo.btTransform();
       // let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
-
-
 
       // make falling items looks falling
       var transform = new Ammo.btTransform(); // taking this out of readBulletObject reduces the leaking
@@ -138,44 +137,43 @@ export default {
 
       // makeGround()
 
-      let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
-      let square = makeSquareShape(25, 25, 25)
+      // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
+      // let square = makeSquareShape(25, 25, 25)
+      // var startTransform = new Ammo.btTransform();
+      // let makeFallingItem = (shape, visual, target) => {
+      //   target = target || visual
+      //   startTransform.setIdentity();
+      //   startTransform.setOrigin(new Ammo.btVector3(target.position.x, target.position.y, target.position.z));
+      //   startTransform.setRotation(new Ammo.btQuaternion(target.quaternion.x, target.quaternion.y, target.quaternion.z, target.quaternion.w))
 
-      var startTransform = new Ammo.btTransform();
-      let makeFallingItem = (shape, visual, target) => {
-        target = target || visual
-        startTransform.setIdentity();
-        startTransform.setOrigin(new Ammo.btVector3(target.position.x, target.position.y, target.position.z));
-        startTransform.setRotation(new Ammo.btQuaternion(target.quaternion.x, target.quaternion.y, target.quaternion.z, target.quaternion.w))
+      //   var mass = 0.1;
+      //   var localInertia = new Ammo.btVector3(0, 0, 0);
+      //   shape.calculateLocalInertia(mass, localInertia);
 
-        var mass = 0.1;
-        var localInertia = new Ammo.btVector3(0, 0, 0);
-        shape.calculateLocalInertia(mass, localInertia);
+      //   var myMotionState = new Ammo.btDefaultMotionState(startTransform);
+      //   var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
+      //   var body = new Ammo.btRigidBody(rbInfo);
 
-        var myMotionState = new Ammo.btDefaultMotionState(startTransform);
-        var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
-        var body = new Ammo.btRigidBody(rbInfo);
+      //   body.visual = visual
+      //   body.updaterTarget = target || visual
 
-        body.visual = visual
-        body.updaterTarget = target || visual
+      //   const localScale = new Ammo.btVector3(visual.scale.x, visual.scale.y, visual.scale.z)
+      //   shape.setLocalScaling(localScale)
+      //   Ammo.destroy(localScale)
 
-        const localScale = new Ammo.btVector3(visual.scale.x, visual.scale.y, visual.scale.z)
-        shape.setLocalScaling(localScale)
-        Ammo.destroy(localScale)
+      //   dynamicsWorld.addRigidBody(body);
+      //   bodies.push(body)
+      // }
 
-        dynamicsWorld.addRigidBody(body);
-        bodies.push(body)
-      }
-
-      let fallings = [1,2,3,4,5,6,7,8,9,10,11]
-      fallings.forEach(() => {
-        let mesh = new Mesh(new BoxBufferGeometry(50, 50, 50, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xff00ff }))
-        mesh.position.y = 150
-        mesh.position.x = (Math.random() - 0.5) * 1000.0
-        mesh.position.z = (Math.random() - 0.5) * 1000.0
-        this.o3d.add(mesh)
-        makeFallingItem(square, mesh)
-      })
+      // let fallings = [1,2,3,4,5,6,7,8,9,10,11]
+      // fallings.forEach(() => {
+      //   let mesh = new Mesh(new BoxBufferGeometry(50, 50, 50, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xff00ff }))
+      //   mesh.position.y = 150
+      //   mesh.position.x = (Math.random() - 0.5) * 1000.0
+      //   mesh.position.z = (Math.random() - 0.5) * 1000.0
+      //   this.o3d.add(mesh)
+      //   makeFallingItem(square, mesh)
+      // })
 
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
@@ -226,10 +224,7 @@ export default {
 
             let character = false
             let world = false
-            // // @ts-ignore
-            // const ptr0 = body0[key]
-            // // @ts-ignore
-            // const ptr1 = body1[key]
+
             if ((body0.isChar && body1.isWorld)) {
               character = body0
               world = body1
@@ -249,109 +244,7 @@ export default {
             }
           }
         })
-
-
       })
-
-      // let makeChar = () => {
-      //   let { charmover } = this.ammo
-      //   var startTransform = new Ammo.btTransform();
-
-      //   let size = {
-      //     x: 13 / 2,
-      //     y: 13,
-      //     z: 13 / 2,
-      //   }
-      //   let squareCharBox = makeSquareShape(size.x, size.y, size.z)
-      //   let mesh = new Mesh(new BoxBufferGeometry(size.x * 2.0, size.y * 2.0, size.z * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
-      //   let targetO3 = new Object3D()
-      //   // targetO3.rotation.x = Math.PI * 0.5
-
-      //   targetO3.position.x = 0
-      //   targetO3.position.y = size.y
-      //   targetO3.position.z = 0
-
-      //   targetO3.add(mesh)
-      //   this.o3d.add(targetO3)
-
-      //   startTransform.setIdentity();
-      //   startTransform.setOrigin(new Ammo.btVector3(targetO3.position.x, targetO3.position.y, targetO3.position.z));
-      //   startTransform.setRotation(new Ammo.btQuaternion(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w))
-
-      //   var shape = squareCharBox
-      //   var mass = 2;
-      //   var localInertia = new Ammo.btVector3(0, 0, 0);
-      //   shape.calculateLocalInertia(mass, localInertia);
-
-      //   var myMotionState = new Ammo.btDefaultMotionState(startTransform);
-      //   var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
-      //   var body = new Ammo.btRigidBody(rbInfo);
-
-      //   let charControl = new KeyState({})
-
-      //   let origin = new Ammo.btVector3(0, 0, 0)
-      //   let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
-
-      //   let velocity = new Ammo.btVector3(0, 0, 0)
-      //   let angularVelocity = new Ammo.btVector3(0, 0, 0)
-      //   let angularFactor = new Ammo.btVector3(0, 1, 0)
-
-      //   body.setCcdMotionThreshold(1e-7)
-      //   body.setCcdSweptSphereRadius(0.50)
-
-      //   this.onLoop(() => {
-      //     // console.table(JSON.stringify(charControl.isDown))
-
-      //     // body.getMotionState().getWorldTransform(startTransform)
-      //     // var originCopy = startTransform.getOrigin();
-
-      //     // origin.setValue(charmover.position.x, originCopy.y(), charmover.position.z)
-      //     // quaternion.setValue(charmover.quaternion.x, charmover.quaternion.y, charmover.quaternion.z, charmover.quaternion.w)
-      //     // startTransform.setIdentity();
-      //     // startTransform.setOrigin(origin)
-      //     // startTransform.setRotation(quaternion)
-      //     // body.getMotionState().setWorldTransform(startTransform)
-
-      //     // charmover.getWorldDirection(dir)
-
-      //     // velocity.setValue(dir.x, dir.y, dir.z)
-
-      //     // body.setLinearVelocity(velocity)
-
-      //     // if (charControl.isDown.forward) {
-      //     //   velocity.setValue(0, 0, 3)
-      //     //   body.applyCentralImpulse(velocity)
-      //     // }
-      //     // if (charControl.isDown.backward) {
-      //     //   velocity.setValue(0, 0, -3)
-      //     //   body.applyCentralImpulse(velocity)
-      //     // }
-
-      //     // if (charControl.isDown.turnLeft) {
-      //     //   angularVelocity.setValue(0, 3, 0)
-      //     //   body.setAngularVelocity(angularVelocity)
-      //     //   body.setAngularFactor(angularFactor)
-      //     // }
-      //     // if (charControl.isDown.turnRight) {
-      //     //   angularVelocity.setValue(0, -3, 0)
-      //     //   body.setAngularVelocity(angularVelocity)
-      //     //   body.setAngularFactor(angularFactor)
-      //     // }
-
-      //     // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)
-      //   })
-
-      //   body.updaterTarget = targetO3
-
-      //   const localScale = new Ammo.btVector3(mesh.scale.x, mesh.scale.y, mesh.scale.z)
-      //   shape.setLocalScaling(localScale)
-      //   Ammo.destroy(localScale)
-
-      //   dynamicsWorld.addRigidBody(body);
-      //   bodies.push(body)
-      // }
-      // onEnsure(() => this.ammo)
-      //   .then(makeChar)
 
       // fbx is root
       const vertex = new Vector3()
