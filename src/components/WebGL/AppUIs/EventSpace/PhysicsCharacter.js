@@ -14,30 +14,35 @@ export class CamLock {
     this.target = target
     this.onClean = onClean
 
+    this.onClean(() => {
+      this.canRun = false
+    })
+
     this.head = target
     target.traverse((item) => {
       // console.log(item.name)
       if (item.name === 'mixamorigHead') {
-        this.controlshead = item
+        this.head = item
+      }
+      if (item.name === 'mixamorigHips') {
+        this.hips = item
       }
     })
     this.run({ head: this.head })
-
-    this.onClean(() => {
-      this.canRun = false
-    })
   }
   run ({ head }) {
     let lookTarget = new Object3D()
     head.add(lookTarget)
 
+
+    this.camera.position.z = 25
+    this.camera.position.y = 0
+
+    // this.target.add(this.camera)
+
     let charLookAtTargetV3Last = new Vector3()
     let charLookAtTargetV3Temp = new Vector3()
-    let charLookAtTargetV3 = new Vector3(0, 13, 20)
-    this.camera.position.z = 20
-    this.camera.position.y = 0
-    lookTarget.position.y = -13
-    lookTarget.position.z = 23
+    let charLookAtTargetV3 = new Vector3()
 
     let OrbitControls = require('three/examples/jsm/controls/OrbitControls').OrbitControls
     this.controls = new OrbitControls(this.camera, this.element)
@@ -52,11 +57,34 @@ export class CamLock {
       }
 
       if (this.mode === 'follow') {
-        this.controls.enable = true
-        this.controls.enableZoom = true
-        this.controls.enablePan = true
-        this.controls.enableRotate = true
-        this.controls.enableKeys = true
+        // this.camera.position.x = 0
+        // this.camera.position.y = 0
+        // this.camera.position.z = 0
+        if (this.camera.userData.oldPos) {
+          this.camera.position.copy(this.camera.userData.oldPos)
+          this.target.remove(this.camera)
+        }
+
+        this.controls.update()
+        lookTarget.updateMatrix()
+        lookTarget.updateMatrixWorld()
+        lookTarget.updateWorldMatrix()
+        charLookAtTargetV3.setFromMatrixPosition(lookTarget.matrixWorld)
+
+        let diff = charLookAtTargetV3Temp.copy(charLookAtTargetV3Last).sub(charLookAtTargetV3)
+        this.camera.position.sub(diff)
+        let v3 = new Vector3()
+        this.camera.getWorldPosition(v3)
+        this.camera.userData.oldPos = v3
+
+        charLookAtTargetV3Last.copy(charLookAtTargetV3)
+
+        this.controls.target0.lerp(charLookAtTargetV3, 0.2)
+        this.controls.target.lerp(charLookAtTargetV3, 0.2)
+        // this.controls.saveState()
+
+        // head.remove(this.camera)
+      } else {
         this.controls.update()
         lookTarget.updateMatrix()
         lookTarget.updateMatrixWorld()
@@ -69,17 +97,24 @@ export class CamLock {
 
         this.controls.target0.lerp(charLookAtTargetV3, 0.2)
         this.controls.target.lerp(charLookAtTargetV3, 0.2)
-        this.controls.saveState()
-      } else {
-        this.controls.enable = false
-        this.controls.enableZoom = false
-        this.controls.enablePan = false
-        this.controls.enableRotate = false
-        this.controls.enableKeys = false
+
         this.target.add(this.camera)
-        this.camera.position.z = -25
-        this.camera.position.y = 13
+        this.camera.position.x = 0
+        this.camera.position.y = 10
+        this.camera.position.z = -33
         this.camera.lookAt(this.target.position)
+
+        let v3 = new Vector3()
+        this.camera.getWorldPosition(v3)
+        this.camera.userData.oldPos = v3
+
+        // this.controls.saveState()
+
+        // this.camera.position.lerp(charLookAtTargetV3, 0.2)
+        // this.camera.position.z -= 8
+        // this.camera.lookAt(this.controls.target)
+
+        // head.add(this.camera)''
       }
     })
   }

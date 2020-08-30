@@ -134,6 +134,7 @@ export default {
     },
     gui (event, data) {
       this.game.dispatchEvent({ type: event, data: data })
+      this.$emit('on-key-gui')
     },
     async initWASM () {
       var gravityConstant = 9.89;
@@ -271,6 +272,19 @@ export default {
           camera: this.ctx.camera,
           element: this.ctx.renderer.domElement,
           onClean: this.onClean
+        })
+
+        this.ctx.renderer.domElement.addEventListener('touchstart', () => {
+          this.camlocker.mode = 'follow'
+        })
+        this.ctx.renderer.domElement.addEventListener('touchmove', () => {
+          this.camlocker.mode = 'follow'
+        })
+        this.$on('on-key-gui', () => {
+          this.camlocker.mode = 'chase'
+        })
+        window.addEventListener('keydown', () => {
+          this.camlocker.mode = 'chase'
         })
 
         physicsChar.body.isChar = true
