@@ -1,6 +1,7 @@
 export class KeyState {
   constructor () {
     let isDown = {
+      isDownAny: false,
       forward: false,
       backward: false,
       left: false,
@@ -29,7 +30,7 @@ export class KeyState {
     }
 
     var onKeyDown = async (event) => {
-      btn.isDownAny = true
+      isDown.isDownAny = true
       switch ( event.keyCode ) {
         case 38: // up
         case 87: // w
@@ -99,7 +100,7 @@ export class KeyState {
       // }
     }
     var onKeyUp = async (event) => {
-      btn.isDownAny = false
+      isDown.isDownAny = false
       // let skipFadeOut = false
       // let isDownCopy = JSON.parse(JSON.stringify(isDown))
 

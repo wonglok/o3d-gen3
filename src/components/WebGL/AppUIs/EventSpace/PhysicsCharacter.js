@@ -3,6 +3,18 @@ import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
 import { KeyState } from './KeyState'
+
+export class CamLock {
+  constructor ({ target, onLoop, camera }) {
+    target.add(camera)
+    camera.position.z = -30
+    camera.position.y = 10
+
+    camera.lookAt(target.position)
+  }
+}
+
+
 export class Moves {
   constructor () {
     let controlMapper = require('./moves/controls/fbx').default
@@ -850,12 +862,12 @@ export class PhysicsCharacter extends EventDispatcher {
     this.done = this.setup()
   }
   async setup () {
-    this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
-    this.scene = this.glb.scene
-    this.scene.position.y = this.size.y * -1
-    this.o3d.add(this.scene)
+    // this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+    // this.scene = this.glb.scene
+    // this.scene.position.y = this.size.y * -1
+    // this.o3d.add(this.scene)
 
-    this.character = new Character({ actor: this.scene, base: this })
+    // this.character = new Character({ actor: this.scene, base: this })
     this.control = new CharacterControl({ base: this })
   }
 }

@@ -38,20 +38,20 @@ export default {
     init () {
       this.scene = new Scene()
       this.camera = new PCamera({ element: this.element, onResize: this.onResize })
-      this.camera.position.z = 100
-      this.camera.position.y = 200
-      this.camera.position.x = 300
+      // this.camera.position.z = 100
+      // this.camera.position.y = 200
+      // this.camera.position.x = 300
 
       this.scene.add(this.o3d)
       this.scene.background = new Color('#232323')
 
       this.rayplay = new RayPlay({ mounter: this.element, onResize: this.onResize, onLoop: this.onLoop, camera: this.camera, onClean: this.onClean })
 
-      let OrbitControls = require('three/examples/jsm/controls/OrbitControls').OrbitControls
-      this.controls = new OrbitControls(this.camera, this.element)
-      this.onLoop(() => {
-        this.controls.update()
-      })
+      // let OrbitControls = require('three/examples/jsm/controls/OrbitControls').OrbitControls
+      // this.controls = new OrbitControls(this.camera, this.element)
+      // this.onLoop(() => {
+      //   this.controls.update()
+      // })
     },
     async initWASM () {
       var gravityConstant = 9.89;
@@ -73,10 +73,7 @@ export default {
       // let transformAux1 = new Ammo.btTransform();
 			// let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
 
-      this.onLoop(() => {
-        var deltaTime = clock.getDelta();
-        dynamicsWorld.stepSimulation(deltaTime, 10);
-      })
+
 
       // make falling items looks falling
       var transform = new Ammo.btTransform(); // taking this out of readBulletObject reduces the leaking
@@ -179,13 +176,29 @@ export default {
       })
 
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
+      let CamLock = require('./PhysicsCharacter.js').CamLock
       let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop })
       physicsChar.done.then(() => {
         this.o3d.add(physicsChar.o3d)
-        this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
+
+        // this.onLoop(() => {
+        //   this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
+        // })
+        new CamLock({
+          target: physicsChar.o3d,
+          onLoop: this.onLoop,
+          camera: this.ctx.camera,
+          element: this.ctx.renderer.domElement,
+          onClean: this.onClean
+        })
 
         bodies.push(physicsChar.body)
         dynamicsWorld.addRigidBody(physicsChar.body)
+
+        this.onLoop(() => {
+          var deltaTime = clock.getDelta();
+          dynamicsWorld.stepSimulation(deltaTime, 10);
+        })
       })
 
       // let makeChar = () => {
