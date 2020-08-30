@@ -24,7 +24,7 @@
       <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.03"></HemisphereLight>
     </O3D> -->
 
-    <O3D :px="0" :pz="0" :py="1000">
+    <O3D :px="100" :pz="100" :py="100">
       <DirectionalLight :color="0xffffff" :floorColor="0xffffff" :helper="isDev && isOff" :intensity="0.75"></DirectionalLight>
     </O3D>
 

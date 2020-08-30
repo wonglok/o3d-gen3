@@ -1,0 +1,242 @@
+<template>
+  <div class="full">
+    <!-- <FastFlame></FastFlame> -->
+  </div>
+</template>
+
+<script>
+import { Scene, Color, MeshBasicMaterial, Mesh, BoxGeometry, PlaneBufferGeometry, MeshMatcapMaterial, DoubleSide, Vector3, Geometry } from 'three'
+import { RenderRoot } from '../../Core/RenderRoot'
+import { PCamera } from '../../Core/PCamera'
+// import { loadFBX } from '../../Core/loadFBX'
+// import { threeToCannon } from 'three-to-cannon'
+import { ConvexGeometry } from 'three/examples/jsm/geometries/ConvexGeometry'
+import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
+import * as CANNONES from 'cannon-es'
+import { loadFBX } from '../../Core/loadFBX'
+import { loadTexture } from '../../Core/loadTexture'
+import { ShaderCube } from '../../Packages/Materials/ShaderCube'
+console.log(CANNONES)
+
+let timeStep = 1/60
+
+export default {
+  mixins:[
+    RenderRoot
+  ],
+  data () {
+    return {
+      scene: false,
+      camera: false
+    }
+  },
+  methods: {
+    init () {
+      let scene = new Scene()
+      this.scene = scene
+      this.camera = new PCamera({ element: this.element, onResize: this.onResize })
+      this.camera.position.z = 20
+      this.camera.position.y = 0
+      this.camera.lookAt(this.scene.position)
+
+      // scene.rotation.x = Math.PI * -0.5
+      this.controls = new OrbitControls(this.camera, this.element)
+      this.onLoop(() => {
+        this.controls.update()
+      })
+
+      this.scene.add(this.o3d)
+      this.scene.background = new Color('#232323')
+    },
+    async initRoom () {
+      this.world = new CANNONES.World();
+      this.world.gravity.set(0,-9.89,0);
+      // this.o3d.rotation.x = Math.PI * -0.5
+      // this.o3d.rotation.y = Math.PI * 0.5
+
+      this.world.broadphase = new CANNONES.NaiveBroadphase();
+      this.world.solver.iterations = 10;
+
+      this.world.defaultContactMaterial.contactEquationStiffness = 5e7;
+      this.world.defaultContactMaterial.contactEquationRelaxation = 4;
+      this.onLoop(() => {
+        this.world.step(timeStep)
+      })
+
+      let makeBox = () => {
+        let boxShape = new CANNONES.Box(new CANNONES.Vec3(1,1,1));
+        let boxBody = new CANNONES.Body({
+          mass: 1
+        });
+        boxBody.addShape(boxShape);
+        boxBody.position.set(0, 10, 0)
+
+        boxBody.quaternion.setFromAxisAngle(new CANNONES.Vec3(1,0,0), -Math.PI/2)
+
+        // boxBody.angularVelocity.set(0,10,0);
+        // boxBody.angularDamping = 0.5;
+
+        this.ctx.world.addBody(boxBody);
+
+        boxBody.addEventListener("collide",function(e){
+          console.log("The sphere just collided with the ground!");
+          console.log("Collided with body:",e.body);
+          console.log("Contact between bodies:",e.contact);
+        });
+
+        let boxGeo = new BoxGeometry(2,2,2);
+        let boxMaterial = new MeshBasicMaterial( { color: 0xff0000, wireframe: true } );
+
+        let mesh = new Mesh( boxGeo, boxMaterial )
+        this.o3d.add(mesh)
+
+        this.onLoop(() => {
+          mesh.position.copy(boxBody.position)
+          mesh.quaternion.copy(boxBody.quaternion)
+        })
+      }
+
+      makeBox()
+
+      let makeFloor = () => {
+        let planeMaterial = new MeshBasicMaterial( { color: 0xffffff, wireframe: true } );
+        let planeGeo = new PlaneBufferGeometry(10, 10, 80, 80)
+
+        var ground = new Mesh( planeGeo, planeMaterial );
+
+        ground.rotation.x = Math.PI * -0.5
+        ground.scale.set(100, 100, 100);
+        this.o3d.add(ground)
+
+        var groundShape = new CANNONES.Plane();
+        var groundBody = new CANNONES.Body({ mass: 0 });
+
+        groundBody.quaternion.setFromAxisAngle(new CANNONES.Vec3(1,0,0), -Math.PI/2)
+
+        groundBody.addShape(groundShape);
+        this.ctx.world.addBody(groundBody);
+      }
+      // makeFloor()
+
+      let makeRoom = async () => {
+        let fbx = await loadFBX(require('file-loader!./room/space-walk.fbx'))
+        let silver = await loadTexture(require('./matcap/silver.png'))
+        console.log(fbx)
+        let items = []
+
+        fbx.position.y = 236
+
+        this.o3d.add(fbx)
+
+        fbx.traverse((item) => {
+          if (item.isMesh) {
+            if (this.ctx.chromaMatCap) {
+              item.material =  this.ctx.chromaMatCap.out.material
+            } else {
+              let shaderCube = new ShaderCube({ renderer: this.ctx.renderer, loop: this.onLoop, res: 32 })
+              item.material = shaderCube.out.material
+            }
+
+            // let toTrimesh = (item) => {
+            //   let geometry = item.geometry
+            //   let vertices = geometry.attributes.position.array
+            //   let indices = Object.keys(vertices).map(Number)
+            //   // if (!(geometry).attributes) {
+            //   // }
+            //   // geometry = new THREE.BufferGeometry().fromGeometry(geometry)
+
+            //   // const vertices: number[] = geometry.attributes.position.array
+            //   // const indices: number[] = Object.keys(vertices).map(Number)
+            //   return new CANNONES.Trimesh(vertices, indices)
+            // }
+
+            let toShape = (item) => {
+              // let verticiesData = item.geometry.attributes.position.array
+              let newGeo = new Geometry().fromBufferGeometry(item.geometry)
+              newGeo = new ConvexGeometry(newGeo.vertices)
+
+              let vertifices = newGeo.vertices
+              var rawFaces = newGeo.faces
+              // var rawOffset = [0, 0, 0]
+
+              var verts = [],
+                faces = [];
+                // offset
+
+              // Get vertices
+              for (let j = 0; j < vertifices.length; j += 1) {
+                let eachVert = vertifices[j]
+                verts.push(new CANNONES.Vec3(eachVert.x, eachVert.y, eachVert.z))
+              }
+
+              // Get faces
+              for (let k = 0; k < rawFaces.length; k += 1) {
+                let eachFace = rawFaces[k]
+                faces.push([eachFace.a, eachFace.b, eachFace.c])
+              }
+
+              // Get offset
+              // offset = new CANNONES.Vec3(rawOffset[0], rawOffset[1], rawOffset[2])
+
+              // Construct polyhedron
+              var bunnyPart = new CANNONES.ConvexPolyhedron({ vertices: verts, faces })
+
+              return bunnyPart
+            }
+            try {
+                // Convex hull.
+                const itemShape = toShape(item)
+                var itemBody = new CANNONES.Body({
+                  mass: 0,
+                })
+                let v3 = new Vector3()
+                item.getWorldPosition(v3)
+
+                itemBody.quaternion.setFromAxisAngle(new CANNONES.Vec3(1,0,0), -Math.PI/2)
+                itemBody.addShape(itemShape, [0, 0, 0])
+                this.ctx.world.addBody(itemBody)
+
+                itemBody.position.set(v3.x, v3.y, v3.z)
+
+                itemBody.addEventListener('collide', (e) => {
+                  console.log("The sphere just collided with the ground!");
+                  console.log("Collided with body:",e.body);
+                  console.log("Contact between bodies:",e.contact);
+                })
+
+                this.onLoop(() => {
+                  item.position.copy(itemBody.position)
+                  item.quaternion.copy(itemBody.quaternion)
+                })
+              } catch (e) {
+                console.log(e)
+              }
+
+            if (item.name === 'Mesh018' || item.name === 'Mesh013' || item.name === 'Mesh017') {
+              // item.material = new MeshMatcapMaterial({ matcap: deps.silver, side: DoubleSide })
+              item.material = new MeshMatcapMaterial({ matcap: silver, side: DoubleSide })
+            }
+            items.push(item)
+
+            item.material.side = DoubleSide
+            item.material.transparent = true
+          }
+        })
+
+
+
+      }
+
+      makeRoom()
+
+    }
+  },
+  mounted () {
+    this.init()
+    this.initRoom()
+  }
+}
+</script>
+
+<style>
+</style>
