@@ -2,12 +2,88 @@
   <div class="relative">
     <slot></slot>
     <StandardLights></StandardLights>
+
+    <div class="touch-action-manipulation select-none absolute z-30 bottom-0 left-0 pl-5 pb-5" v-if="game">
+      <div class="touch-action-manipulation select-none">
+        <!-- <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border text-20 text-white bg-white" @click="showToolsBox = !showToolsBox">
+          <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/party.svg" alt="">
+        </div> -->
+
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @click="gui('key-x', true)">
+          <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gamepad.svg" alt="">
+        </div>
+      </div>
+
+      <div class="touch-action-manipulation select-none flex">
+        <!-- <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border  text-20 text-white" :class="{ 'bg-blue-500': game.useGyro, 'bg-white': !game.useGyro }" @click="() => gui('toggle-gyro', {})">
+          <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gyro.svg" alt="">
+        </div> -->
+        <!-- <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': game.useGyro, 'bg-white': !game.useGyro }" @click="() => gui('toggle-gyro', {})">
+          AR
+        </div>
+        <div v-if="camlocker" class="inline-block rounded-full text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white">
+          <img v-show="camlocker.mode === 'follow'"  @click="camlocker.mode = 'chase'" class=" scale-75 transform select-none  pointer-events-none" src="./img/touch.svg" alt="">
+          <img v-show="camlocker.mode !== 'follow'"  @click="camlocker.mode = 'follow'" class=" scale-75 transform select-none  pointer-events-none" src="./img/camcorder.svg" alt="" />
+        </div> -->
+      </div>
+      <div class="touch-action-manipulation select-none" @touchstart.prevent="() => {}" @touchmove.prevent="() => {}">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('go-forward', true)" @mousedown="gui('go-forward', true)"  @touchend="gui('go-forward', false)" @mouseup="gui('go-forward', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/up.svg" alt="">
+        </div>
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('go-backward', true)" @mousedown="gui('go-backward', true)" @touchend="gui('go-backward', false)" @mouseup="gui('go-backward', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/down.svg" alt="">
+        </div>
+      </div>
+    </div>
+
+    <div class="touch-action-manipulation select-none  absolute z-30 bottom-0 right-0 pr-5 pb-5" v-if="game">
+      <!-- <div class="touch-action-manipulation select-none flex justify-end">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border text-20 text-white bg-white" @click="goToPage()">
+          <img class=" touch-action-manipulation scale-100 transform select-none  pointer-events-none" src="./img/menu.svg" alt="">
+        </div>
+      </div> -->
+
+      <div class="touch-action-manipulation select-none" @touchstart.prevent="() => {}" @touchmove.prevent="() => {}">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-r', true)" @mousedown="gui('key-r', true)"  @touchend="gui('key-r', false)" @mouseup="gui('key-r', false)">
+          <img v-show="game && game.moodType === 'peaceful'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/love.svg" alt="">
+          <img v-show="game && game.moodType === 'fighting'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/fight1.svg" alt="">
+        </div>
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-t', true)" @mousedown="gui('key-t', true)"  @touchend="gui('key-t', false)" @mouseup="gui('key-t', false)">
+          <img v-show="game && game.moodType === 'peaceful'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/dance.svg" alt="">
+          <img v-show="game && game.moodType === 'fighting'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/fight2.svg" alt="">
+        </div>
+      </div>
+
+      <div class="touch-action-manipulation select-none" v-show="game && !game.useGyro" @touchstart.prevent="() => {}" @touchmove.prevent="() => {}">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('turn-left', true)" @mousedown="gui('turn-left', true)"  @touchend="gui('turn-left', false)" @mouseup="gui('turn-left', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/turn-left.svg" alt="">
+        </div>
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('turn-right', true)" @mousedown="gui('turn-right', true)" @touchend="gui('turn-right', false)" @mouseup="gui('turn-right', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/turn-right.svg" alt="">
+        </div>
+      </div>
+
+      <!--
+      <div class="touch-action-manipulation select-none" @touchstart.prevent="() => {}" @touchmove.prevent="() => {}">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('go-left', true)" @mousedown="gui('go-left', true)"  @touchend="gui('go-left', false)" @mouseup="gui('go-left', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/left.svg" alt="">
+        </div>
+
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('go-right', true)" @mousedown="gui('go-right', true)" @touchend="gui('go-right', false)" @mouseup="gui('go-right', false)">
+          <img class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/right.svg" alt="">
+        </div>
+      </div> -->
+
+    </div>
+
+
+
   </div>
 </template>
 
 <script>
 import { RenderRoot } from '../../Core/RenderRoot'
-import { Scene, Color, Mesh, BoxBufferGeometry, Vector3, MeshBasicMaterial, MeshMatcapMaterial, DoubleSide, Matrix4, Clock } from 'three'
+import { Scene, Color, Vector3, MeshMatcapMaterial, DoubleSide, Matrix4, Clock } from 'three'
 import { PCamera } from '../../Core/PCamera'
 import { loadAmmo } from './loadAmmo.js'
 // import { ShaderCube } from '../../Packages/Materials/ShaderCube'
@@ -25,6 +101,8 @@ export default {
   ],
   data () {
     return {
+      camlocker: false,
+      game: false,
       ammo: false,
 
       bodies: false,
@@ -53,6 +131,9 @@ export default {
       // this.onLoop(() => {
       //   this.controls.update()
       // })
+    },
+    gui (event, data) {
+      this.game.dispatchEvent({ type: event, data: data })
     },
     async initWASM () {
       var gravityConstant = 9.89;
@@ -178,12 +259,13 @@ export default {
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
       let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop })
+      this.game = physicsChar
       physicsChar.done.then(() => {
         this.o3d.add(physicsChar.o3d)
         // this.onLoop(() => {
         //   this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
         // })
-        new CamLock({
+        this.camlocker = new CamLock({
           target: physicsChar.o3d,
           onLoop: this.onLoop,
           camera: this.ctx.camera,
@@ -253,24 +335,23 @@ export default {
       const target = new Vector3()
       const transformM4 = new Matrix4()
 
-      let getShapeFromVisual = (visual) => {
+      let getShapeFromVisual = (fragment) => {
         const originalHull = new Ammo.btConvexHullShape()
         originalHull.setMargin(margin)
 
-        let geo = visual.geometry
+        let geo = fragment.geometry
         geo.computeBoundingBox()
 
         geo.boundingBox.getCenter(target)
         transformM4.makeTranslation(target.x, target.y, target.z)
-        // const vertexCount = geo.attributes.position.array.length / 3
-        if (visual.updateMatrices) {
-          visual.updateMatrices()
+        if (fragment.updateMatrices) {
+          fragment.updateMatrices()
         }
 
         const inverse = new Matrix4()
         const components = geo.attributes.position.array
         for (let i = 0; i < components.length; i += 3) {
-          transformM4.multiplyMatrices(inverse, visual.matrixWorld)
+          transformM4.multiplyMatrices(inverse, fragment.matrixWorld)
           vertex
             .set(components[i], components[i + 1], components[i + 2])
             .applyMatrix4(transformM4)
@@ -296,7 +377,7 @@ export default {
           collisionShape.destroy()
         })
 
-        const localScale = new Ammo.btVector3(visual.scale.x, visual.scale.y, visual.scale.z)
+        const localScale = new Ammo.btVector3(fragment.scale.x, fragment.scale.y, fragment.scale.z)
         collisionShape.setLocalScaling(localScale)
 
         Ammo.destroy(localScale)
@@ -309,8 +390,6 @@ export default {
         // let fbx = await loadFBX(require('file-loader!./room/space-walk.fbx'))
         let silver = await loadTexture(require('./matcap/silver.png'))
 
-        // fbx.position.y = -236
-        // fbx.position.z = 200
         this.o3d.add(fbx)
 
         fbx.traverse((item) => {
@@ -318,17 +397,6 @@ export default {
             // this.rayplay.add(item, () => {
             //   console.log(item.name)
             // })
-
-            // if (this.ctx.chromaMatCap) {
-            //   item.material =  this.ctx.chromaMatCap.out.material
-            // } else {
-            //   let shaderCube = new ShaderCube({ renderer: this.ctx.renderer, loop: this.onLoop, res: 32 })
-            //   item.material = shaderCube.out.material
-            // }
-
-            // if (item.name === 'Mesh018' || item.name === 'Mesh013' || item.name === 'Mesh017') {
-            //   // item.material = new MeshMatcapMaterial({ matcap: deps.silver, side: DoubleSide })
-            // }
 
             item.material = new MeshMatcapMaterial({ matcap: silver, side: DoubleSide })
 
@@ -359,5 +427,26 @@ export default {
 }
 </script>
 
-<style>
+
+<style lang="postcss">
+.moves-box{
+  height: 170px;
+}
+@screen lg {
+  .moves-box{
+    height: calc(100% - 250px);
+  }
+}
+.touch-action-manipulation{
+  touch-action: manipulation;
+}
+.bg-transp-black{
+  background-color: rgba(0,0,0,0.3);
+}
+.bg-transp-white{
+  background-color: rgba(255,255,255,0.3);
+}
+.touch-action-manipulation {
+  touch-action: manipulation;
+}
 </style>

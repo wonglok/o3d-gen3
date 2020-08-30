@@ -1,5 +1,6 @@
 export class KeyState {
-  constructor () {
+  constructor ({ base }) {
+    this.base = base
     let isDown = {
       isDownAny: false,
       forward: false,
@@ -161,7 +162,76 @@ export class KeyState {
       // runCmd()
     }
 
+    this.base.addEventListener('go-forward', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 87 })
+      } else {
+        onKeyUp({ keyCode: 87 })
+      }
+    })
 
+    this.base.addEventListener('go-backward', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 83 })
+      } else {
+        onKeyUp({ keyCode: 83 })
+      }
+    })
+
+    this.base.addEventListener('go-left', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 65 })
+      } else {
+        onKeyUp({ keyCode: 65 })
+      }
+    })
+
+    this.base.addEventListener('go-right', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 68 })
+      } else {
+        onKeyUp({ keyCode: 68 })
+      }
+    })
+
+    this.base.addEventListener('turn-left', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 81 })
+      } else {
+        onKeyUp({ keyCode: 81 })
+      }
+    })
+
+    this.base.addEventListener('turn-right', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 69 })
+      } else {
+        onKeyUp({ keyCode: 69 })
+      }
+    })
+
+    this.base.addEventListener('key-r', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 82 })
+      } else {
+        onKeyUp({ keyCode: 82 })
+      }
+    })
+    this.base.addEventListener('key-t', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 84 })
+      } else {
+        onKeyUp({ keyCode: 84 })
+      }
+    })
+
+    this.base.addEventListener('key-x', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 88 })
+      } else {
+        onKeyUp({ keyCode: 88 })
+      }
+    })
 
     document.addEventListener( 'keydown', onKeyDown, false );
     document.addEventListener( 'keyup', onKeyUp, false );
