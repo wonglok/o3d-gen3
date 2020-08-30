@@ -5,12 +5,76 @@ import { loadFBX } from '../../Core/loadFBX.js'
 import { KeyState } from './KeyState'
 
 export class CamLock {
-  constructor ({ target, camera }) {
-    target.add(camera)
-    camera.position.z = -25
-    camera.position.y = 13
+  constructor ({ target, camera, onLoop, element, onClean }) {
+    this.element = element
+    this.camera = camera
+    this.onLoop = onLoop
+    this.canRun = true
+    this.target = target
 
-    camera.lookAt(target.position)
+    this.onClean = onClean
+    this.onClean(() => {
+      this.canRun = false
+    })
+
+    let selected = target
+    target.traverse((item) => {
+      console.log(item.name)
+      if (item.name === 'mixamorigHead') {
+        selected = item
+      }
+    })
+    this.run({ selected })
+  }
+  run ({ selected }) {
+    let lookTarget = new Object3D()
+    selected.add(lookTarget)
+
+    let charLookAtTargetV3Last = new Vector3()
+    let charLookAtTargetV3Temp = new Vector3()
+    let charLookAtTargetV3 = new Vector3(0, 13, 20)
+    this.camera.position.z = 20
+    this.camera.position.y = 0
+    lookTarget.position.y = -13
+    lookTarget.position.z = 23
+
+    let OrbitControls = require('three/examples/jsm/controls/OrbitControls').OrbitControls
+    this.controls = new OrbitControls(this.camera, this.element)
+    this.controls.enableDamping = true
+    this.onClean(() => {
+      this.controls.dispose()
+    })
+
+    this.onLoop(() => {
+      if (!this.canRun) {
+        return
+      }
+      this.controls.update()
+      lookTarget.updateMatrix()
+      lookTarget.updateMatrixWorld()
+      lookTarget.updateWorldMatrix()
+      charLookAtTargetV3.setFromMatrixPosition(lookTarget.matrixWorld)
+
+      let diff = charLookAtTargetV3Temp.copy(charLookAtTargetV3Last).sub(charLookAtTargetV3)
+      this.camera.position.sub(diff)
+      charLookAtTargetV3Last.copy(charLookAtTargetV3)
+
+      this.controls.target0.lerp(charLookAtTargetV3, 0.2)
+      this.controls.target.lerp(charLookAtTargetV3, 0.2)
+      this.controls.saveState()
+    })
+
+    // target.add(camera)
+    // camera.position.z = -25
+    // camera.position.y = 13
+
+    // camera.lookAt(target.position)
+
+    // let OrbitControls = require('three/examples/jsm/controls/OrbitControls').OrbitControls
+    // this.controls = new OrbitControls(this.camera, this.element)
+    // this.onLoop(() => {
+    //   this.controls.update()
+    // })
   }
 }
 
