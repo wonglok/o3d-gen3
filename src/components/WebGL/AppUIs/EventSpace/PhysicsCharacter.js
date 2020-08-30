@@ -322,7 +322,7 @@ export class CharActions {
     idle.repetitions = Infinity
     idle.play()
 
-    this.base.moodType = 'fighting'
+    this.base.moodType = 'peaceful'
 
     let toggleFightMode = () => {
       let last = idle
