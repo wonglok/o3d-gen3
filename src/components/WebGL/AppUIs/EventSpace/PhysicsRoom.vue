@@ -63,7 +63,7 @@ export default {
 			let solver = new Ammo.btSequentialImpulseConstraintSolver();
       let dynamicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
       this.dynamicsWorld = dynamicsWorld
-      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant * 15.0, 0 ) );
+      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant * 20.0, 0 ) );
       let clock = new Clock()
 
       let bodies = []
@@ -182,7 +182,6 @@ export default {
       let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop })
       physicsChar.done.then(() => {
         this.o3d.add(physicsChar.o3d)
-
         // this.onLoop(() => {
         //   this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
         // })
@@ -240,6 +239,7 @@ export default {
               world = body0
             }
             if (character && world) {
+              // window.character = character
               let name = world.updaterTarget.name
               let vel = character.getLinearVelocity()
               if (name === 'Cube006' && (vel.y() <= 0) && (vel.x() >= 1) && (vel.z() >= 1)) {
@@ -422,9 +422,9 @@ export default {
 
         fbx.traverse((item) => {
           if (item.isMesh) {
-            this.rayplay.add(item, () => {
-              console.log(item.name)
-            })
+            // this.rayplay.add(item, () => {
+            //   console.log(item.name)
+            // })
 
             // if (this.ctx.chromaMatCap) {
             //   item.material =  this.ctx.chromaMatCap.out.material

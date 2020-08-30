@@ -4,28 +4,30 @@
       <PointLight :decay="2" :distance="0" :color="0xffffff" :helper="isDev && isOff" :intensity="0.4"></PointLight>
     </O3D>
 
-    <O3D :px="0" :pz="-10" :py="18">
-      <PointLight :decay="2" :distance="0" :color="0xffffff" :helper="isDev && isOff" :intensity="0.4"></PointLight>
-    </O3D>
 
-    <O3D :px="30" :pz="30" :py="10">
-      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.03"></HemisphereLight>
-    </O3D>
-
-    <O3D :px="-30" :pz="30" :py="10">
-      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.03"></HemisphereLight>
-    </O3D>
-
-    <O3D :px="30" :pz="-30" :py="10">
-      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.03"></HemisphereLight>
-    </O3D>
 
     <O3D :px="-30" :pz="-30" :py="10">
       <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.03"></HemisphereLight>
     </O3D> -->
 
+    <O3D :px="0" :pz="-10" :py="18">
+      <PointLight :decay="2" :distance="0" :color="0xffffff" :helper="isDev && isOff" :intensity="0.3"></PointLight>
+    </O3D>
+
+    <O3D :px="30" :pz="30" :py="10">
+      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.3"></HemisphereLight>
+    </O3D>
+
+    <O3D :px="-30" :pz="30" :py="10">
+      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.3"></HemisphereLight>
+    </O3D>
+
+    <O3D :px="30" :pz="-30" :py="10">
+      <HemisphereLight :color="0xffffff" :floorColor="0xbababa" :helper="isDev && isOff" :intensity="0.3"></HemisphereLight>
+    </O3D>
+
     <O3D :px="100" :pz="100" :py="100">
-      <DirectionalLight :color="0xffffff" :floorColor="0xffffff" :helper="isDev && isOff" :intensity="0.75"></DirectionalLight>
+      <DirectionalLight :color="0xffffff" :floorColor="0xffffff" :helper="isDev && isOff" :intensity="0.6"></DirectionalLight>
     </O3D>
 
     <O3D :px="0" :pz="0" :py="0">

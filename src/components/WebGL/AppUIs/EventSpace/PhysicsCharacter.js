@@ -665,9 +665,12 @@ export class CharacterControl {
 
     // let mesh = new Mesh(new BoxBufferGeometry(size.x * 2.0, size.y * 2.0, size.z * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
     // targetO3.add(mesh)
-    targetO3.position.x = 0
+    // targetO3.position.x = 0
     targetO3.position.y = size.y + 10
-    targetO3.position.z = 0
+    targetO3.position.fromArray([126.0895767211914, 100, 364.65924072265625])
+    targetO3.rotation.y = Math.PI
+
+    // targetO3.position.z = 0
 
     startTransform.setIdentity();
     startTransform.setOrigin(new Ammo.btVector3(targetO3.position.x, targetO3.position.y, targetO3.position.z));
@@ -831,15 +834,17 @@ export class CharacterControl {
       // //   body.applyCentralImpulse(velocity)
       // // }
 
-      if (this.keys.space) {
+      if (this.keys.space && !this.isJumping && !this.keys.forward && !this.keys.backward && !this.keys.left && !this.keys.right) {
         // body.setDamping(0.97, 0.97)
+        this.isJumping = true
         setTimeout(() => {
-          velocity.setValue(0, 10, 0)
+          velocity.setValue(0, 130, 0)
           body.applyCentralImpulse(velocity)
 
           setTimeout(() => {
-            velocity.setValue(0, -10, 0)
-            body.applyCentralImpulse(velocity)
+            this.isJumping = false
+            // velocity.setValue(0, -30, 0)
+            // body.applyCentralImpulse(velocity)
           }, 450)
         }, 450)
       }
