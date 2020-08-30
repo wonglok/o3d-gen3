@@ -7,8 +7,8 @@ import { KeyState } from './KeyState'
 export class CamLock {
   constructor ({ target, camera }) {
     target.add(camera)
-    camera.position.z = -30
-    camera.position.y = 10
+    camera.position.z = -25
+    camera.position.y = 13
 
     camera.lookAt(target.position)
   }
@@ -675,7 +675,7 @@ export class CharacterControl {
 
     var shape = squareCharBox
     var mass = 1;
-    var localInertia = new Ammo.btVector3(0, 1, 0);
+    var localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
 
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
@@ -683,15 +683,17 @@ export class CharacterControl {
     var body = new Ammo.btRigidBody(rbInfo);
 
 
-    // let origin3 = new Ammo.btVector3(0, 0, 0)
-    // let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
+    let origin3 = new Ammo.btVector3(0, 0, 0)
+    let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
 
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
     let angularFactor = new Ammo.btVector3(0, 0, 0)
     // let linearFactor = new Ammo.btVector3(1, 1, 1)
+    shape.setMargin(10)
 
-    body.setDamping(0.99, 0.99)
+    body.setDamping(0.98, 0.98)
+    // body.setMassProps(1, new Ammo.btVector3(1, 1, 1))
 
     body.setCcdMotionThreshold(1e-7)
     body.setCcdSweptSphereRadius(0.50)
@@ -710,6 +712,8 @@ export class CharacterControl {
       angularFactor.setValue(0, 0, 0)
       body.setAngularFactor(angularFactor)
 
+
+
       // console.table(JSON.stringify(this.keys))
 
       // body.setAngularFactor(angularFactor)
@@ -719,21 +723,16 @@ export class CharacterControl {
       //   body.setDamping(0.98, 0.98)
       // }
 
-      // body.getMotionState().getWorldTransform(startTransform)
-      // var originCopy = startTransform.getOrigin();
-      // var rotCopy = startTransform.getRotation()
-      // qq.copy({
-      //   x: 0,
-      //   y: rotCopy.y(),
-      //   z: 0,
-      //   w: 1
-      // })
-      // origin3.setValue(targetO3.position.x, originCopy.y(), targetO3.position.z)
-      // quaternion.setValue(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w)
-      // startTransform.setIdentity();
-      // startTransform.setOrigin(origin3)
-      // startTransform.setRotation(quaternion)
-      // body.getMotionState().setWorldTransform(startTransform)
+      body.getMotionState().getWorldTransform(startTransform)
+      var originCopy = startTransform.getOrigin();
+      var rotCopy = startTransform.getRotation()
+
+      origin3.setValue(originCopy.x(), originCopy.y(), originCopy.z())
+      quaternion.setValue(rotCopy.x(), rotCopy.y(), rotCopy.z(), rotCopy.w())
+      startTransform.setIdentity();
+      startTransform.setOrigin(origin3)
+      startTransform.setRotation(quaternion)
+      body.getMotionState().setWorldTransform(startTransform)
 
       // targetO3.getWorldDirection(dir)
 
@@ -773,7 +772,10 @@ export class CharacterControl {
         v3.y = 0
         v3.z = speed
 
-        let flip = targetO3.quaternion.w
+        let flip = 1
+        if (targetO3.quaternion.w < 0) {
+          flip = -1
+        }
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * 0.5 * flip
@@ -789,7 +791,10 @@ export class CharacterControl {
         v3.y = 0
         v3.z = speed
 
-        let flip = targetO3.quaternion.w
+        let flip = 1
+        if (targetO3.quaternion.w < 0) {
+          flip = -1
+        }
 
         let e3 = new Euler().copy(targetO3.rotation)
         e3.y += Math.PI * -0.5 * flip
@@ -829,11 +834,11 @@ export class CharacterControl {
       if (this.keys.space) {
         // body.setDamping(0.97, 0.97)
         setTimeout(() => {
-          velocity.setValue(0, 20, 0)
+          velocity.setValue(0, 10, 0)
           body.applyCentralImpulse(velocity)
 
           setTimeout(() => {
-            velocity.setValue(0, -20, 0)
+            velocity.setValue(0, -10, 0)
             body.applyCentralImpulse(velocity)
           }, 450)
         }, 450)
@@ -856,11 +861,6 @@ export class CharacterControl {
 
       // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)
     })
-
-    setInterval(() => {
-      velocity.setValue(0, -20, 0)
-      body.applyCentralImpulse(velocity)
-    }, 450)
 
     targetO3.userData.isChar = true
     body.updaterTarget = targetO3

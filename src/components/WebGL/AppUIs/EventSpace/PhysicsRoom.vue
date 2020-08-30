@@ -1,6 +1,5 @@
 <template>
   <div class="relative">
-
     <slot></slot>
     <StandardLights></StandardLights>
   </div>
@@ -16,7 +15,7 @@ import { loadFBX } from '../../Core/loadFBX'
 import { loadTexture } from '../../Core/loadTexture'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { RayPlay } from '../../Core/RayPlay'
-// import¿ _ from 'lodash'
+import _ from 'lodash'
 // import { onEnsure } from '../../Core/O3DNode'
 // import { KeyState } from './KeyState'
 
@@ -64,7 +63,7 @@ export default {
 			let solver = new Ammo.btSequentialImpulseConstraintSolver();
       let dynamicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
       this.dynamicsWorld = dynamicsWorld
-      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant, 0 ) );
+      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant * 15.0, 0 ) );
       let clock = new Clock()
 
       let bodies = []
@@ -149,7 +148,7 @@ export default {
         startTransform.setOrigin(new Ammo.btVector3(target.position.x, target.position.y, target.position.z));
         startTransform.setRotation(new Ammo.btQuaternion(target.quaternion.x, target.quaternion.y, target.quaternion.z, target.quaternion.w))
 
-        var mass = 1;
+        var mass = 0.1;
         var localInertia = new Ammo.btVector3(0, 0, 0);
         shape.calculateLocalInertia(mass, localInertia);
 
@@ -205,7 +204,13 @@ export default {
           dynamicsWorld.stepSimulation(deltaTime, 10);
         })
 
-        let miniJump = new Ammo.btVector3(0, 1, 0)
+        let miniJump = new Ammo.btVector3(0, 15, 0)
+        let tt = _.throttle((character) => {
+          character.activate()
+          character.applyCentralImpulse(miniJump)
+          console.log('jump')
+        }, 10)
+
         this.onLoop(() => {
           for (let i = 0, il = dispatcher.getNumManifolds(); i < il; i++) {
             const contactManifold = dispatcher.getManifoldByIndexInternal(i)
@@ -236,10 +241,9 @@ export default {
             }
             if (character && world) {
               let name = world.updaterTarget.name
-
-              if (name === 'Cube006') {
-                character.activate()
-                character.applyCentralImpulse(miniJump)
+              let vel = character.getLinearVelocity()
+              if (name === 'Cube006' && (vel.x() > 0 || vel.z() > 0)) {
+                tt(character)
               }
               // console.log(world.updaterTarget.name)
             }
