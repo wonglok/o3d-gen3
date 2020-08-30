@@ -204,7 +204,7 @@ export default {
           dynamicsWorld.stepSimulation(deltaTime, 10);
         })
 
-        let miniJump = new Ammo.btVector3(0, 15, 0)
+        let miniJump = new Ammo.btVector3(0, 20, 0)
         let tt = _.throttle((character) => {
           character.activate()
           character.applyCentralImpulse(miniJump)
@@ -242,7 +242,7 @@ export default {
             if (character && world) {
               let name = world.updaterTarget.name
               let vel = character.getLinearVelocity()
-              if (name === 'Cube006' && (vel.x() > 0 || vel.z() > 0)) {
+              if (name === 'Cube006' && (vel.y() <= 0) && (vel.x() >= 1) && (vel.z() >= 1)) {
                 tt(character)
               }
               // console.log(world.updaterTarget.name)
