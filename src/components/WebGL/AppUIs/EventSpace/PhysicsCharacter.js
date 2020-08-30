@@ -1050,6 +1050,7 @@ export class PhysicsCharacter extends EventDispatcher {
     this.done = this.setup()
   }
   async setup () {
+    // this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
     this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
     this.scene = this.glb.scene
     this.scene.position.y = this.size.y * -1

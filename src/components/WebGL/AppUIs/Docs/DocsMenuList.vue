@@ -1,6 +1,6 @@
 <template>
   <div class="full relative" :class="{ 'neu-bg': neu }">
-    <DocsCanvas class="full">
+    <DocsCanvas class="full hiddensmall">
       <GradientBG :pz="-20"></GradientBG>
 
       <div class="p-3 py-6 absolute top-0 left-0 w-full">
@@ -33,6 +33,13 @@ export default {
 }
 </script>
 
-<style>
-
+<style lang="postcss">
+.hiddensmall canvas{
+  display: none;
+}
+@screen lg {
+  .hiddensmall canvas{
+    display: block;
+  }
+}
 </style>
