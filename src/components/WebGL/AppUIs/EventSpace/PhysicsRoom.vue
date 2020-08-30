@@ -242,7 +242,7 @@ export default {
               // window.character = character
               let name = world.updaterTarget.name
               let vel = character.getLinearVelocity()
-              if (name === 'Cube006' && (vel.y() <= 0) && (Math.abs(vel.x()) >= 2) && (Math.abs(vel.z()) >= 2)) {
+              if (name === 'Cube006' && (Math.abs(vel.y()) <= 0) && (Math.abs(vel.x()) >= 2) && (Math.abs(vel.z()) >= 2)) {
                 tt(character)
               }
               // console.log(world.updaterTarget.name)
