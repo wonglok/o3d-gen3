@@ -262,7 +262,10 @@ export default {
       let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop })
       this.game = physicsChar
       physicsChar.done.then(() => {
+        return physicsChar.doneMixer
+      }).then(() => {
         this.o3d.add(physicsChar.o3d)
+
         // this.onLoop(() => {
         //   this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
         // })
@@ -275,6 +278,9 @@ export default {
         })
 
         this.ctx.renderer.domElement.addEventListener('touchstart', () => {
+          this.camlocker.mode = 'follow'
+        })
+        this.ctx.renderer.domElement.addEventListener('mousedown', () => {
           this.camlocker.mode = 'follow'
         })
         this.ctx.renderer.domElement.addEventListener('touchmove', () => {

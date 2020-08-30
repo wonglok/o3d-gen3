@@ -6,7 +6,7 @@ import { KeyState } from './KeyState'
 
 export class CamLock {
   constructor ({ target, camera, onLoop, element, onClean }) {
-    this.mode = 'lock'
+    this.mode = 'chase'
     this.element = element
     this.camera = camera
     this.onLoop = onLoop
@@ -997,7 +997,7 @@ export class Character {
 
     this.actions = new CharActions({ base })
     this.actor.visible = false
-    this.done = this.actions.setupWithMixer({ mixer: this.mixer })
+    this.base.doneMixer = this.actions.setupWithMixer({ mixer: this.mixer })
       .then(() => {
         this.actor.rotation.x = Math.PI * -0.5
         this.actor.scale.x = this.scale
