@@ -14,7 +14,7 @@ export class CamLock {
     this.target = target
     this.onClean = onClean
 
-    this.lockPosition = new Vector3(0, 13, -25)
+    this.camLockPosition = new Vector3(0, 13.5 / 2, -20)
 
     this.onClean(() => {
       this.canRun = false
@@ -47,7 +47,7 @@ export class CamLock {
     this.target.add(lookTarget)
     this.needsReload = true
 
-    this.camera.position.copy(this.lockPosition)
+    this.camera.position.copy(this.camLockPosition)
 
     // this.target.add(this.camera)
 
@@ -111,18 +111,14 @@ export class CamLock {
 
         if (this.needsReload) {
           this.target.add(this.camera)
-          // this.camera.position.x = 0
-          // this.camera.position.y = 13
-          // this.camera.position.z = -25
 
-          this.camera.position.copy(this.lockPosition)
+          this.camera.position.copy(this.camLockPosition)
           this.camera.lookAt(this.target.position)
 
           let v3 = new Vector3()
           this.camera.getWorldPosition(v3)
           this.camera.userData.oldPos = v3
         }
-        // this.camera.position.copy(this.lockPosition, 0.2)
 
         // this.camera.position.lerp(charLookAtTargetV3, 0.2)
         // this.camera.position.z -= 8
