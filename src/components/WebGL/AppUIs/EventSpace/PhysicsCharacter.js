@@ -14,6 +14,8 @@ export class CamLock {
     this.target = target
     this.onClean = onClean
 
+    this.lockPosition = new Vector3(0, 13, -25)
+
     this.onClean(() => {
       this.canRun = false
     })
@@ -28,7 +30,7 @@ export class CamLock {
         this.hips = item
       }
     })
-    this.run({ head: this.head })
+    this.run()
   }
   get mode  () {
     return this._mode
@@ -40,13 +42,12 @@ export class CamLock {
     this._mode = v
     return v
   }
-  run ({ head }) {
+  run () {
     let lookTarget = new Object3D()
-    head.add(lookTarget)
+    this.target.add(lookTarget)
     this.needsReload = true
 
-    this.camera.position.z = 25
-    this.camera.position.y = 0
+    this.camera.position.copy(this.lockPosition)
 
     // this.target.add(this.camera)
 
@@ -72,8 +73,8 @@ export class CamLock {
         // this.camera.position.z = 0
         if (this.camera.userData.oldPos && this.needsReload) {
           this.needsReload = false
-          this.camera.position.copy(this.camera.userData.oldPos)
           this.target.remove(this.camera)
+          this.camera.position.copy(this.camera.userData.oldPos)
         }
 
         this.controls.update()
@@ -92,9 +93,7 @@ export class CamLock {
 
         this.controls.target0.lerp(charLookAtTargetV3, 0.2)
         this.controls.target.lerp(charLookAtTargetV3, 0.2)
-        // this.controls.saveState()
-
-        // head.remove(this.camera)
+        this.controls.saveState()
       } else {
         this.controls.update()
         lookTarget.updateMatrix()
@@ -108,18 +107,22 @@ export class CamLock {
 
         this.controls.target0.lerp(charLookAtTargetV3, 0.2)
         this.controls.target.lerp(charLookAtTargetV3, 0.2)
+        this.controls.saveState()
 
-        this.target.add(this.camera)
-        this.camera.position.x = 0
-        this.camera.position.y = 10
-        this.camera.position.z = -33
-        this.camera.lookAt(this.target.position)
+        if (this.needsReload) {
+          this.target.add(this.camera)
+          // this.camera.position.x = 0
+          // this.camera.position.y = 13
+          // this.camera.position.z = -25
 
-        let v3 = new Vector3()
-        this.camera.getWorldPosition(v3)
-        this.camera.userData.oldPos = v3
+          this.camera.position.copy(this.lockPosition)
+          this.camera.lookAt(this.target.position)
 
-        // this.controls.saveState()
+          let v3 = new Vector3()
+          this.camera.getWorldPosition(v3)
+          this.camera.userData.oldPos = v3
+        }
+        // this.camera.position.copy(this.lockPosition, 0.2)
 
         // this.camera.position.lerp(charLookAtTargetV3, 0.2)
         // this.camera.position.z -= 8
