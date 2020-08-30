@@ -688,7 +688,9 @@ export class CharacterControl {
 
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
-    let angularFactor = new Ammo.btVector3(0, 1, 0)
+    let angularFactor = new Ammo.btVector3(0, 0, 0)
+
+    body.setDamping(0.98, 0.98)
 
     // body.setCcdMotionThreshold(1e-7)
     // body.setCcdSweptSphereRadius(0.50)
@@ -697,15 +699,16 @@ export class CharacterControl {
     // let qq = new Quaternion()
     this.base.onLoop(() => {
       angularFactor.setValue(0, 0, 0)
-      body.setAngularFactor(angularFactor)
-      if (this.keys.isDownAny) {
-        body.setDamping(0.98, 0.98)
-      } else {
-        body.setDamping(0.98, 0.98)
-      }
       console.table(JSON.stringify(this.keys))
 
-      body.getMotionState().getWorldTransform(startTransform)
+      // body.setAngularFactor(angularFactor)
+      // if (this.keys.isDownAny) {
+      //   body.setDamping(0.98, 0.98)
+      // } else {
+      //   body.setDamping(0.98, 0.98)
+      // }
+
+      // body.getMotionState().getWorldTransform(startTransform)
       // var originCopy = startTransform.getOrigin();
       // var rotCopy = startTransform.getRotation()
       // qq.copy({
@@ -754,14 +757,19 @@ export class CharacterControl {
         body.applyCentralImpulse(velocity)
       }
 
-
       if (this.keys.left) {
         v3.x = 0
         v3.y = 0
         v3.z = 5
 
+        let flip = 1
+
+        if (targetO3.quaternion.w < 0) {
+          flip = -1
+        }
+
         let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * 0.5
+        e3.y += Math.PI * 0.5 * flip
         v3.applyEuler(e3)
 
         velocity.setValue(v3.x, 0, v3.z)
@@ -774,8 +782,14 @@ export class CharacterControl {
         v3.y = 0
         v3.z = 5
 
+        let flip = 1
+
+        if (targetO3.quaternion.w < 0) {
+          flip = -1
+        }
+
         let e3 = new Euler().copy(targetO3.rotation)
-        e3.y += Math.PI * -0.5
+        e3.y += Math.PI * -0.5 * flip
         v3.applyEuler(e3)
 
         velocity.setValue(v3.x, 0, v3.z)
