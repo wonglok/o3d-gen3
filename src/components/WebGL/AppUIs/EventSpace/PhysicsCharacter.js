@@ -6,7 +6,7 @@ import { KeyState } from './KeyState'
 
 export class CamLock {
   constructor ({ target, camera, onLoop, element, onClean }) {
-    this.mode = 'chase'
+    this._mode = 'chase'
     this.element = element
     this.camera = camera
     this.onLoop = onLoop
@@ -30,10 +30,20 @@ export class CamLock {
     })
     this.run({ head: this.head })
   }
+  get mode  () {
+    return this._mode
+  }
+  set mode  (v) {
+    if (this._mode !== v) {
+      this.needsReload = true
+    }
+    this._mode = v
+    return v
+  }
   run ({ head }) {
     let lookTarget = new Object3D()
     head.add(lookTarget)
-
+    this.needsReload = true
 
     this.camera.position.z = 25
     this.camera.position.y = 0
@@ -60,7 +70,8 @@ export class CamLock {
         // this.camera.position.x = 0
         // this.camera.position.y = 0
         // this.camera.position.z = 0
-        if (this.camera.userData.oldPos) {
+        if (this.camera.userData.oldPos && this.needsReload) {
+          this.needsReload = false
           this.camera.position.copy(this.camera.userData.oldPos)
           this.target.remove(this.camera)
         }
