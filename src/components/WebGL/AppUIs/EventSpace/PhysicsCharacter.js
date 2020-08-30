@@ -1,4 +1,4 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, Euler, Quaternion } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3 } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
@@ -801,8 +801,8 @@ export class CharacterControl {
     var body = new Ammo.btRigidBody(rbInfo);
 
 
-    let origin3 = new Ammo.btVector3(0, 0, 0)
-    let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
+    // let origin3 = new Ammo.btVector3(0, 0, 0)
+    // let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
 
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
