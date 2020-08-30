@@ -1,4 +1,4 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, BoxBufferGeometry, MeshBasicMaterial, Mesh } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, BoxBufferGeometry, MeshBasicMaterial, Mesh, Vector3, Quaternion, Euler } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
@@ -682,8 +682,9 @@ export class CharacterControl {
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
     var body = new Ammo.btRigidBody(rbInfo);
 
-    let origin3 = new Ammo.btVector3(0, 0, 0)
-    let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
+
+    // let origin3 = new Ammo.btVector3(0, 0, 0)
+    // let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
 
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
@@ -692,18 +693,33 @@ export class CharacterControl {
     // body.setCcdMotionThreshold(1e-7)
     // body.setCcdSweptSphereRadius(0.50)
     // let steer = new Object3D()
+    let v3 = new Vector3()
+    // let qq = new Quaternion()
     this.base.onLoop(() => {
-      // console.table(JSON.stringify(charControl.isDown))
+      angularFactor.setValue(0, 0, 0)
+      body.setAngularFactor(angularFactor)
+      if (this.keys.isDownAny) {
+        body.setDamping(0.98, 0.98)
+      } else {
+        body.setDamping(0.98, 0.98)
+      }
+      console.table(JSON.stringify(this.keys))
 
       body.getMotionState().getWorldTransform(startTransform)
-      var originCopy = startTransform.getOrigin();
-
-      origin3.setValue(targetO3.position.x, originCopy.y(), targetO3.position.z)
-      quaternion.setValue(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w)
-      startTransform.setIdentity();
-      startTransform.setOrigin(origin3)
-      startTransform.setRotation(quaternion)
-      body.getMotionState().setWorldTransform(startTransform)
+      // var originCopy = startTransform.getOrigin();
+      // var rotCopy = startTransform.getRotation()
+      // qq.copy({
+      //   x: 0,
+      //   y: rotCopy.y(),
+      //   z: 0,
+      //   w: 1
+      // })
+      // origin3.setValue(targetO3.position.x, originCopy.y(), targetO3.position.z)
+      // quaternion.setValue(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w)
+      // startTransform.setIdentity();
+      // startTransform.setOrigin(origin3)
+      // startTransform.setRotation(quaternion)
+      // body.getMotionState().setWorldTransform(startTransform)
 
       // targetO3.getWorldDirection(dir)
 
@@ -711,40 +727,66 @@ export class CharacterControl {
 
       // body.setLinearVelocity(velocity)
 
+      console.log(targetO3.rotation.y)
       if (this.keys.forward) {
-        velocity.setValue(0, 0, 3)
-        body.applyCentralImpulse(velocity)
-        console.log(this.keys.forward)
-      }
-      if (this.keys.backward) {
-        velocity.setValue(0, 0, -3)
+        v3.x = 0
+        v3.y = 0
+        v3.z = 5
+
+        let e3 = new Euler().copy(targetO3.rotation)
+        e3.y += Math.PI * 0.0
+        v3.applyEuler(e3)
+
+        velocity.setValue(v3.x, 0, v3.z)
         body.applyCentralImpulse(velocity)
       }
 
-      if (this.keys.left) {
-        velocity.setValue(3, 0, 0)
-        body.applyCentralImpulse(velocity)
-      }
-      if (this.keys.right) {
-        velocity.setValue(-3, 0, 0)
-        body.applyCentralImpulse(velocity)
-      }
+      // // if (this.keys.left) {
+      // //   v3.x = 0
+      // //   v3.y = 0
+      // //   v3.z = 5
+      // //   v3.applyEuler(new Euler(0, targetO3.rotation.y + 0.5 * Math.PI, 0, 'XYZ'))
+      // //   velocity.setValue(v3.x, 0, v3.z)
+      // //   body.applyCentralImpulse(velocity)
+      // // }
 
-      if (this.keys.space) {
-        velocity.setValue(0, 3, 0)
-        body.applyCentralImpulse(velocity)
-      }
+      // // if (this.keys.right) {
+      // //   v3.x = 0
+      // //   v3.y = 0
+      // //   v3.z = 5
+      // //   v3.applyEuler(new Euler(0, targetO3.rotation.y + -0.5 * Math.PI, 0, 'XYZ'))
+      // //   velocity.setValue(v3.x, 0, v3.z)
+      // //   body.applyCentralImpulse(velocity)
+      // // }
 
-      if (this.keys.turnLeft) {
-        angularVelocity.setValue(0, 3, 0)
-        body.setAngularVelocity(angularVelocity)
-        body.setAngularFactor(angularFactor)
-      }
-      if (this.keys.turnRight) {
-        angularVelocity.setValue(0, -3, 0)
-        body.setAngularVelocity(angularVelocity)
-        body.setAngularFactor(angularFactor)
-      }
+      // // if (this.keys.left) {
+      // //   velocity.setValue(3, 0, 0)
+      // //   body.applyCentralImpulse(velocity)
+      // // }
+      // // if (this.keys.right) {
+      // //   velocity.setValue(-3, 0, 0)
+      // //   body.applyCentralImpulse(velocity)
+      // // }
+
+      // if (this.keys.space) {
+      //   velocity.setValue(0, 10, 0)
+      //   body.applyCentralImpulse(velocity)
+      // }
+
+      // if (this.keys.turnLeft) {
+      //   angularVelocity.setValue(0, 3, 0)
+      //   body.setAngularVelocity(angularVelocity)
+
+      //   angularFactor.setValue(0, 1, 0)
+      //   body.setAngularFactor(angularFactor)
+      // }
+      // if (this.keys.turnRight) {
+      //   angularVelocity.setValue(0, -3, 0)
+      //   body.setAngularVelocity(angularVelocity)
+
+      //   angularFactor.setValue(0, 1, 0)
+      //   body.setAngularFactor(angularFactor)
+      // }
 
       // velocityFactor.setValue(charmover.position.x, charmover.position.y, charmover.position.z)
     })
