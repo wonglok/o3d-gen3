@@ -9,6 +9,11 @@
           <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/party.svg" alt="">
         </div> -->
 
+
+        <div v-if="camlocker && camlocker.isMobile" class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': camlocker.gyro && camlocker.gyro.use, 'bg-white': camlocker.gyro && !camlocker.gyro.use || !camlocker.gyro }" @click="camlocker.setupGYRO()">
+          <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gyroscope.svg" alt="">
+        </div>
+
         <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @click="gui('key-x', true)">
           <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gamepad.svg" alt="">
         </div>
@@ -18,9 +23,7 @@
         <!-- <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border  text-20 text-white" :class="{ 'bg-blue-500': game.useGyro, 'bg-white': !game.useGyro }" @click="() => gui('toggle-gyro', {})">
           <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gyro.svg" alt="">
         </div> -->
-        <!-- <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': game.useGyro, 'bg-white': !game.useGyro }" @click="() => gui('toggle-gyro', {})">
-          AR
-        </div>
+        <!--
         <div v-if="camlocker" class="inline-block rounded-full text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white">
           <img v-show="camlocker.mode === 'follow'"  @click="camlocker.mode = 'chase'" class=" scale-75 transform select-none  pointer-events-none" src="./img/touch.svg" alt="">
           <img v-show="camlocker.mode !== 'follow'"  @click="camlocker.mode = 'follow'" class=" scale-75 transform select-none  pointer-events-none" src="./img/camcorder.svg" alt="" />
@@ -209,6 +212,7 @@ export default {
             y: origin.y(),
             z: origin.z()
           }
+
           var rotation = transform.getRotation();
 
           let rot = {

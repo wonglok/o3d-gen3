@@ -1,20 +1,68 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3 } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, PerspectiveCamera, Euler } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
 import { KeyState } from './KeyState'
 
-export class CamLock {
-  constructor ({ target, camera, onLoop, element, onClean }) {
-    this._mode = 'chase'
+export class GyroExpress {
+  constructor ({ target, camera, onLoop, element, onClean, onResize, base }) {
     this.element = element
     this.camera = camera
     this.onLoop = onLoop
-    this.canRun = true
     this.target = target
     this.onClean = onClean
+    this.onResize = onResize
+    this.base = base
 
+    this.use = true
+
+    this.euler = new Euler()
+    this.diff = new Vector3()
+    this.lookTarget = new Object3D()
+
+    this.setupGYRO()
+  }
+  setupGYRO () {
+    let DeviceOrientationControls = require('three/examples/jsm/controls/DeviceOrientationControls').DeviceOrientationControls
+
+    this.proxyCam = new PerspectiveCamera(75, 1, 0.01, 100000000000000)
+
+    this.lookTarget.position.z = 10
+    this.proxyCam.add(this.lookTarget)
+    this.gyro = new DeviceOrientationControls(this.proxyCam, this.element)
+    this.gyro.dampping = true
+    this.onClean(() => {
+      this.gyro.dispose()
+    })
+    this.onLoop(() => {
+      if (!this.use) {
+        return
+      }
+      this.gyro.enabled = true
+      this.gyro.update()
+
+      this.diff.copy(this.euler).sub(this.proxyCam.rotation)
+      this.euler.copy(this.proxyCam.rotation)
+    })
+  }
+}
+
+export class CamLock {
+  constructor ({ target, camera, onLoop, element, onClean, onResize, base }) {
+    this.isMobile = 'ontouchstart' in window
+    this.element = element
+    this.camera = camera
+    this.onLoop = onLoop
+    this.target = target
+    this.onClean = onClean
+    this.onResize = onResize
+    this.base = base
+
+    this.canRun = true
+    this._mode = 'chase'
     this.camLockPosition = new Vector3(0, 13.5 / 2, -20)
+
+    this.gyro = false
 
     this.onClean(() => {
       this.canRun = false
@@ -30,7 +78,15 @@ export class CamLock {
         this.hips = item
       }
     })
+
     this.run()
+  }
+  setupGYRO () {
+    if (this.gyro) {
+      this.gyro.use = !this.gyro.use
+      return
+    }
+    this.gyro = new GyroExpress({ ...this })
   }
   get mode  () {
     return this._mode
@@ -62,6 +118,7 @@ export class CamLock {
       this.controls.dispose()
     })
 
+    let v3temp = new Vector3()
     this.onLoop(() => {
       if (!this.canRun) {
         return
@@ -83,9 +140,13 @@ export class CamLock {
         lookTarget.updateWorldMatrix()
         charLookAtTargetV3.setFromMatrixPosition(lookTarget.matrixWorld)
 
+        // if (this.gyro) {
+        //   charLookAtTargetV3.applyEuler(this.gyro.euler)
+        // }
+
         let diff = charLookAtTargetV3Temp.copy(charLookAtTargetV3Last).sub(charLookAtTargetV3)
         this.camera.position.sub(diff)
-        let v3 = new Vector3()
+        let v3 = v3temp
         this.camera.getWorldPosition(v3)
         this.camera.userData.oldPos = v3
 
@@ -101,6 +162,7 @@ export class CamLock {
         lookTarget.updateWorldMatrix()
         charLookAtTargetV3.setFromMatrixPosition(lookTarget.matrixWorld)
 
+
         let diff = charLookAtTargetV3Temp.copy(charLookAtTargetV3Last).sub(charLookAtTargetV3)
         this.camera.position.sub(diff)
         charLookAtTargetV3Last.copy(charLookAtTargetV3)
@@ -111,14 +173,24 @@ export class CamLock {
 
         if (this.needsReload) {
           this.target.add(this.camera)
+          let v3 = new Vector3()
+          if (this.gyro) {
+            v3.x = this.gyro.euler.y * 20
+            v3.y = this.gyro.euler.x * 20 * -1
+          }
 
-          this.camera.position.copy(this.camLockPosition)
+          this.camera.position.copy(this.camLockPosition).add(v3)
           this.camera.lookAt(this.target.position)
 
-          let v3 = new Vector3()
-          this.camera.getWorldPosition(v3)
-          this.camera.userData.oldPos = v3
+          let vv3 = new Vector3()
+          this.camera.getWorldPosition(vv3)
+          this.camera.userData.oldPos = vv3
         }
+
+        // if (this.gyro && this.gyro.use) {
+        //   this.camera.position.y += this.gyro.diff.y
+        //   this.camera.position.x += this.gyro.diff.x
+        // }
 
         // this.camera.position.lerp(charLookAtTargetV3, 0.2)
         // this.camera.position.z -= 8
