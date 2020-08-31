@@ -10,7 +10,7 @@
         </div> -->
 
 
-        <div v-if="camlocker && camlocker.isMobile" class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': camlocker.gyro && camlocker.gyro.use && camlocker.mode === 'chase', 'bg-white': camlocker.gyro && !camlocker.gyro.use || !camlocker.gyro || camlocker.mode === 'follow' }" @click="camlocker.setupGYRO(); camlocker.mode = 'chase'">
+        <div v-if="camlocker && camlocker.isMobile" class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': camlocker.gyro && camlocker.gyro.use && camlocker.mode === 'chase', 'bg-white': camlocker.gyro && !camlocker.gyro.use || !camlocker.gyro || camlocker.mode === 'follow' }" @click="camlocker.setupGYRO(); camlocker.gyro.use = true; camlocker.mode = 'chase'">
           <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gyroscope.svg" alt="">
         </div>
 
@@ -176,6 +176,7 @@ export default {
         0, 80, 0
       ]
       initPos = [126.0895767211914, 50, 364.65924072265625]
+      this.camera.position.fromArray(initPos)
 
       if (window.devicePixelRatio > 1) {
         this.lowerPixel = 0.75
@@ -310,6 +311,7 @@ export default {
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, loop: this.onLoop, res: 128, color: new Color('#ffffff') })
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
+
       let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop, initPos, chroma })
       this.game = physicsChar
       physicsChar.done.then(() => {
@@ -320,6 +322,7 @@ export default {
         // this.onLoop(() => {
         //   this.camera.position.copy(this.o3d.position).add(new Vector3(0, 13, 13))
         // })
+
         this.camlocker = new CamLock({
           target: physicsChar.o3d,
           onLoop: this.onLoop,

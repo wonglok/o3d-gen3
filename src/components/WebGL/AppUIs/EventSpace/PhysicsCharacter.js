@@ -175,8 +175,8 @@ export class CamLock {
         if (this.needsReload) {
           this.target.add(this.camera)
           if (this.gyro && this.gyro.use) {
-            lp3.x = this.gyro.euler.y * -20
-            lp3.y = (this.gyro.euler.x + Math.PI * 0.25) * (20) * -1
+            lp3.x = this.gyro.euler.y * -1 * 20
+            lp3.y = (this.gyro.euler.x + Math.PI * 0.25) * (13) * -1
             lp3.z = 0
           } else {
             lp3.x = 0
@@ -1013,7 +1013,7 @@ export class Character {
     this.mixer = new Mixer({ base, actor })
     this.bones = {}
     this.mapCharBones({ actor })
-    this.setupCharTextureEncoding({ actor })
+    this.setupProperTextureEncoding({ actor })
     if (this.base.chroma) {
       this.setupChroma({ actor, chroma: this.base.chroma })
     }
@@ -1073,7 +1073,7 @@ export class Character {
     // console.log(this.bones)
   }
 
-  setupCharTextureEncoding ({ actor }) {
+  setupProperTextureEncoding ({ actor }) {
     actor.traverse((item) => {
       if (item.isMesh) {
         if (item.material.map) {
