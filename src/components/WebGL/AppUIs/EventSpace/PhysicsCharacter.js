@@ -95,6 +95,11 @@ export class CamLock {
     if (this._mode !== v) {
       this.needsReload = true
     }
+    if (v === 'follow') {
+      if (this.gyro) {
+        this.gyro.use = false
+      }
+    }
     this._mode = v
     return v
   }
@@ -162,7 +167,6 @@ export class CamLock {
         lookTarget.updateMatrixWorld()
         lookTarget.updateWorldMatrix()
         charLookAtTargetV3.setFromMatrixPosition(lookTarget.matrixWorld)
-
 
         let diff = charLookAtTargetV3Temp.copy(charLookAtTargetV3Last).sub(charLookAtTargetV3)
         this.camera.position.sub(diff)

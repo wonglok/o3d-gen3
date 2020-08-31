@@ -10,7 +10,7 @@
         </div> -->
 
 
-        <div v-if="camlocker && camlocker.isMobile" class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': camlocker.gyro && camlocker.gyro.use && camlocker.mode === 'chase', 'bg-white': camlocker.gyro && !camlocker.gyro.use || !camlocker.gyro || camlocker.mode === 'follow' }" @click="camlocker.setupGYRO(); camlocker.gyro.use = true; camlocker.mode = 'chase'">
+        <div v-if="camlocker && camlocker.isMobile" class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 w-12 h-12 border-gray-100 border  text-20 text-black" :class="{ 'bg-blue-500': camlocker.gyro && camlocker.gyro.use && camlocker.mode === 'chase', 'bg-white': camlocker.gyro && !camlocker.gyro.use || !camlocker.gyro || camlocker.mode === 'follow' }" @click="camlocker.setupGYRO(); camlocker.mode = 'chase'">
           <img class="touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/gyroscope.svg" alt="">
         </div>
 
