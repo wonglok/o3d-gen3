@@ -173,18 +173,20 @@ export class CamLock {
 
         if (this.needsReload) {
           this.target.add(this.camera)
-          let v3 = new Vector3()
+          // look at position v3
+          let lp3 = new Vector3()
           if (this.gyro) {
-            v3.x = this.gyro.euler.y * 20
-            v3.y = (this.gyro.euler.x + Math.PI * 0.25) * (20) * -1
+            lp3.x = this.gyro.euler.y * -20
+            lp3.y = (this.gyro.euler.x + Math.PI * 0.25) * (20) * -1
           }
 
-          this.camera.position.copy(this.camLockPosition).add(v3)
+          this.camera.position.copy(this.camLockPosition).add(lp3)
           this.camera.lookAt(this.target.position)
 
-          let vv3 = new Vector3()
-          this.camera.getWorldPosition(vv3)
-          this.camera.userData.oldPos = vv3
+          // world pos v3
+          let wp3 = new Vector3()
+          this.camera.getWorldPosition(wp3)
+          this.camera.userData.oldPos = wp3
         }
 
         // if (this.gyro && this.gyro.use) {
