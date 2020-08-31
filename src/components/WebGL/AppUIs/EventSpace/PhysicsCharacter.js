@@ -176,7 +176,7 @@ export class CamLock {
           let v3 = new Vector3()
           if (this.gyro) {
             v3.x = this.gyro.euler.y * 20
-            v3.y = this.gyro.euler.x * 20 * -1
+            v3.y = (this.gyro.euler.x + Math.PI * 0.25) * (20) * -1
           }
 
           this.camera.position.copy(this.camLockPosition).add(v3)
