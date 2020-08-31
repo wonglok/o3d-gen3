@@ -178,6 +178,10 @@ export class CamLock {
             lp3.x = this.gyro.euler.y * -20
             lp3.y = (this.gyro.euler.x + Math.PI * 0.25) * (20) * -1
             lp3.z = 0
+          } else {
+            lp3.x = 0
+            lp3.y = 0
+            lp3.z = 0
           }
 
           this.camera.position.copy(this.camLockPosition).add(lp3)
