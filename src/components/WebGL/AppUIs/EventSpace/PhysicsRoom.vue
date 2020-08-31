@@ -297,7 +297,7 @@ export default {
       let initPos = [
         0, 80, 0
       ]
-      initPos = [126.0895767211914, 150, 364.65924072265625]
+      initPos = [126.0895767211914, 50, 364.65924072265625]
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, loop: this.onLoop, res: 128, color: new Color('#ffffff') })
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
@@ -326,6 +326,9 @@ export default {
           this.camlocker.mode = 'follow'
         })
         this.ctx.renderer.domElement.addEventListener('touchmove', () => {
+          this.camlocker.mode = 'follow'
+        })
+        this.ctx.renderer.domElement.addEventListener('wheel', () => {
           this.camlocker.mode = 'follow'
         })
         this.$on('on-key-gui', () => {

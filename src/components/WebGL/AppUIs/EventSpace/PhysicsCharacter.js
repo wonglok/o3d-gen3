@@ -815,7 +815,7 @@ export class CharacterControl {
     let angularFactor = new Ammo.btVector3(0, 0, 0)
     // let linearFactor = new Ammo.btVector3(1, 1, 1)
 
-    body.setDamping(0.98, 0.98)
+    body.setDamping(0.95, 0.95)
     // body.setMassProps(1, new Ammo.btVector3(1, 1, 1))
 
     body.setCcdMotionThreshold(1e-7)
