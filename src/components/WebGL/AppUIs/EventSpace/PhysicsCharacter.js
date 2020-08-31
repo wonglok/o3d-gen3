@@ -686,6 +686,14 @@ export class CharActions {
       }
     })
 
+    this.base.addEventListener('key-space', (v) => {
+      if (v.data) {
+        onKeyDown({ keyCode: 32 })
+      } else {
+        onKeyUp({ keyCode: 32 })
+      }
+    })
+
     document.addEventListener( 'keydown', onKeyDown, false );
     document.addEventListener( 'keyup', onKeyUp, false );
   }

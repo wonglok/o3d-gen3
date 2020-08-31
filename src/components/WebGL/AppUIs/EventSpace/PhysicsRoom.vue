@@ -44,13 +44,13 @@
       </div> -->
 
       <div class="touch-action-manipulation select-none" @touchstart.prevent="() => {}" @touchmove.prevent="() => {}">
-        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-r', true)" @mousedown="gui('key-r', true)"  @touchend="gui('key-r', false)" @mouseup="gui('key-r', false)">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-t', true)" @mousedown="gui('key-t', true)"  @touchend="gui('key-t', false)" @mouseup="gui('key-t', false)">
           <img v-show="game && game.moodType === 'peaceful'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/love.svg" alt="">
           <img v-show="game && game.moodType === 'fighting'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/fight1.svg" alt="">
         </div>
-        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-t', true)" @mousedown="gui('key-t', true)"  @touchend="gui('key-t', false)" @mouseup="gui('key-t', false)">
+        <div class="inline-block rounded-full touch-action-manipulation text-center select-none p-3 mx-1 my-1 border-gray-100 border bg-white text-20 text-white" @touchstart="gui('key-space', true)" @mousedown="gui('key-space', true)"  @touchend="gui('key-space', false)" @mouseup="gui('key-space', false)">
           <img v-show="game && game.moodType === 'peaceful'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/dance.svg" alt="">
-          <img v-show="game && game.moodType === 'fighting'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/fight2.svg" alt="">
+          <img v-show="game && game.moodType === 'fighting'" class=" touch-action-manipulation scale-75 transform select-none  pointer-events-none" src="./img/dance.svg" alt="">
         </div>
       </div>
 
