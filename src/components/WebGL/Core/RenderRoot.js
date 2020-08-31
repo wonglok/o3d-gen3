@@ -60,6 +60,7 @@ export const RenderRoot = {
   },
   data () {
     return {
+      lowerPixel: 1.0,
       needsToCheckViewPort: true,
       preserveDrawingBuffer: false,
       canRun: false,
@@ -197,14 +198,21 @@ export const RenderRoot = {
       this.touchdiv = renderer.domElement
       this.onResize(() => {
         let dpi = this.dpi
-        // if (dpi > 2) {
-        //   dpi = 2
-        // }
+        if (!isNaN(this.lowerPixel)) {
+          dpi = this.dpi * this.lowerPixel
+        }
+
         let rect = this.rootMounterElement.getBoundingClientRect()
         renderer.setSize(rect.width, rect.height)
         renderer.setPixelRatio(dpi)
       })
-
+      this.$watch('lowerPixel', () => {
+        let dpi = this.dpi
+        if (!isNaN(this.lowerPixel)) {
+          dpi = this.dpi * this.lowerPixel
+        }
+        renderer.setPixelRatio(dpi)
+      })
       this.$on('composer', (v) => {
         this.composer = v
       })

@@ -174,6 +174,10 @@ export default {
       ]
       initPos = [126.0895767211914, 50, 364.65924072265625]
 
+      if (window.devicePixelRatio > 1) {
+        this.lowerPixel = 0.75
+      }
+
       var gravityConstant = 9.89;
       let Ammo = await loadAmmo()
       this.Ammo = Ammo
