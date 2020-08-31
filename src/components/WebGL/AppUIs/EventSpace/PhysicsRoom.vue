@@ -83,7 +83,7 @@
 
 <script>
 import { RenderRoot } from '../../Core/RenderRoot'
-import { Scene, Color, Vector3, MeshMatcapMaterial, DoubleSide, Matrix4, Clock } from 'three'
+import { Scene, Color, Vector3, MeshMatcapMaterial, DoubleSide, Matrix4, Clock, BoxBufferGeometry, MeshBasicMaterial, Mesh } from 'three'
 import { PCamera } from '../../Core/PCamera'
 import { loadAmmo } from './loadAmmo.js'
 // import { ShaderCube } from '../../Packages/Materials/ShaderCube'
@@ -91,7 +91,8 @@ import { loadFBX } from '../../Core/loadFBX'
 import { loadTexture } from '../../Core/loadTexture'
 // import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { RayPlay } from '../../Core/RayPlay'
-import _ from 'lodash'
+import { ShaderCubeChromatics } from '../../Packages/Materials/ShaderCubeChromatics'
+// import _ from 'lodash'
 // import { onEnsure } from '../../Core/O3DNode'
 // import { KeyState } from './KeyState'
 
@@ -106,7 +107,7 @@ export default {
       ammo: false,
 
       bodies: false,
-      dynamicsWorld: false,
+      // dynamicsWorld: false,
       Ammo: false,
       scene: false,
       camera: false
@@ -137,6 +138,38 @@ export default {
       this.$emit('on-key-gui')
     },
     async initWASM () {
+      // let JumpList = [
+      //   'Plane004_Plane010'
+      // ]
+      // let ConstraintList = [
+      //   'Cube040_Cube027',
+      //   'Plane004_Plane010',
+      //   'Cylinder_Cylinder001',
+      //   'Plane003_Plane009',
+      //   'Cube_Cube001',
+      //   'Cube020_Cube032',
+
+      //   'Cube019_Cube035',
+      //   'Cube036_Cube038',
+      //   'Cube006_Cube007',
+      //   'Cube011_Cube009',
+      //   'Cube042_Cube130',
+      //   // 'Cylinder028_Cylinder002',
+      //   // 'Cylinder029_Cylinder004'
+      // ]
+      // let ExcludeList =  [
+      //   // 'Cube025_Cube113',
+      //   // 'Cube008_Cube004',
+      //   // 'Cube035_Cube017',
+      //   // 'Cylinder002_Cylinder003',
+      //   // 'Cube013_Cube020',
+      //   // 'Cube004_Cube023',
+      //   // 'Cylinder014_Cylinder005',
+      //   // 'Cube039_Cube021',
+      //   // 'Cube041_Cube016'
+      // ]
+      // let isConstraint = (item) => ((ConstraintList.includes(item.name) || item.name.indexOf('Plane') !== -1) && !ExcludeList.includes(item.name))
+
       var gravityConstant = 9.89;
       let Ammo = await loadAmmo()
       this.Ammo = Ammo
@@ -145,13 +178,13 @@ export default {
 			let broadphase = new Ammo.btDbvtBroadphase();
 			let solver = new Ammo.btSequentialImpulseConstraintSolver();
       let dynamicsWorld = new Ammo.btDiscreteDynamicsWorld( dispatcher, broadphase, solver, collisionConfiguration );
-      this.dynamicsWorld = dynamicsWorld
-      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant * 20.0, 0 ) );
+      // this.dynamicsWorld = dynamicsWorld
+      dynamicsWorld.setGravity( new Ammo.btVector3( 0, -gravityConstant * 25.0, 0 ) );
       let clock = new Clock()
 
       let bodies = []
-      this.bodies = bodies
-      let margin = 0.1
+      // this.bodies = bodies
+      let margin = 0.05
 
       // let transformAux1 = new Ammo.btTransform();
       // let tempBtVec3_1 = new Ammo.btVector3( 0, 0, 0 );
@@ -221,47 +254,54 @@ export default {
 
       // makeGround()
 
-      // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
-      // let square = makeSquareShape(25, 25, 25)
-      // var startTransform = new Ammo.btTransform();
-      // let makeFallingItem = (shape, visual, target) => {
-      //   target = target || visual
-      //   startTransform.setIdentity();
-      //   startTransform.setOrigin(new Ammo.btVector3(target.position.x, target.position.y, target.position.z));
-      //   startTransform.setRotation(new Ammo.btQuaternion(target.quaternion.x, target.quaternion.y, target.quaternion.z, target.quaternion.w))
+      let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
+            var startTransform = new Ammo.btTransform();
 
-      //   var mass = 0.1;
-      //   var localInertia = new Ammo.btVector3(0, 0, 0);
-      //   shape.calculateLocalInertia(mass, localInertia);
+      let makeFallingItem = (shape, visual, target) => {
+        target = target || visual
+        startTransform.setIdentity();
+        startTransform.setOrigin(new Ammo.btVector3(target.position.x, target.position.y, target.position.z));
+        startTransform.setRotation(new Ammo.btQuaternion(target.quaternion.x, target.quaternion.y, target.quaternion.z, target.quaternion.w))
 
-      //   var myMotionState = new Ammo.btDefaultMotionState(startTransform);
-      //   var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
-      //   var body = new Ammo.btRigidBody(rbInfo);
+        var mass = 0.1;
+        var localInertia = new Ammo.btVector3(0, 0, 0);
+        shape.calculateLocalInertia(mass, localInertia);
 
-      //   body.visual = visual
-      //   body.updaterTarget = target || visual
+        var myMotionState = new Ammo.btDefaultMotionState(startTransform);
+        var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
+        var body = new Ammo.btRigidBody(rbInfo);
 
-      //   const localScale = new Ammo.btVector3(visual.scale.x, visual.scale.y, visual.scale.z)
-      //   shape.setLocalScaling(localScale)
-      //   Ammo.destroy(localScale)
+        body.visual = visual
+        body.updaterTarget = target || visual
 
-      //   dynamicsWorld.addRigidBody(body);
-      //   bodies.push(body)
-      // }
+        const localScale = new Ammo.btVector3(visual.scale.x, visual.scale.y, visual.scale.z)
+        shape.setLocalScaling(localScale)
+        Ammo.destroy(localScale)
 
-      // let fallings = [1,2,3,4,5,6,7,8,9,10,11]
-      // fallings.forEach(() => {
-      //   let mesh = new Mesh(new BoxBufferGeometry(50, 50, 50, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xff00ff }))
-      //   mesh.position.y = 150
-      //   mesh.position.x = (Math.random() - 0.5) * 1000.0
-      //   mesh.position.z = (Math.random() - 0.5) * 1000.0
-      //   this.o3d.add(mesh)
-      //   makeFallingItem(square, mesh)
-      // })
+        dynamicsWorld.addRigidBody(body);
+        bodies.push(body)
+      }
 
+      let dimension = 15
+      let square = makeSquareShape(dimension, dimension, dimension)
+      let fallings = [1,2,3,4,5,6,7,8,9,10,11, 12,13,14,15,16]
+      fallings.forEach(() => {
+        let mesh = new Mesh(new BoxBufferGeometry(dimension * 2, dimension * 2, dimension * 2, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xff00ff }))
+        mesh.position.y = 150
+        mesh.position.x = (Math.random() - 0.5) * 800.0
+        mesh.position.z = (Math.random() - 0.5) * 800.0
+        this.o3d.add(mesh)
+        makeFallingItem(square, mesh)
+      })
+
+      let initPos = [
+        0, 80, 0
+      ]
+      initPos = [126.0895767211914, 150, 364.65924072265625]
+      let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, loop: this.onLoop, res: 128, color: new Color('#ffffff') })
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
-      let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop })
+      let physicsChar = new PhysicsCharacter({ Ammo, onLoop: this.onLoop, onResize: this.onLoop, initPos, chroma })
       this.game = physicsChar
       physicsChar.done.then(() => {
         return physicsChar.doneMixer
@@ -294,8 +334,13 @@ export default {
         window.addEventListener('keydown', () => {
           this.camlocker.mode = 'chase'
         })
+        window.addEventListener('keydown', e => {
+          if (e.keyCode === 88) {
+            this.gui('key-x', true)
+          }
+        })
 
-        // physicsChar.body.isChar = true
+        physicsChar.body.isChar = true
 
         bodies.push(physicsChar.body)
         dynamicsWorld.addRigidBody(physicsChar.body)
@@ -305,12 +350,12 @@ export default {
           dynamicsWorld.stepSimulation(deltaTime, 10);
         })
 
-        let miniJump = new Ammo.btVector3(0, 20, 0)
-        let tt = _.throttle((character) => {
-          character.activate()
-          character.applyCentralImpulse(miniJump)
-          console.log('jump')
-        }, 10)
+        // let miniJump = new Ammo.btVector3(0, 30, 0)
+        // let throttledMiniJump = _.throttle((character, world) => {
+        //   character.activate()
+        //   character.applyCentralImpulse(miniJump)
+        //   console.log('jump', world.updaterTarget.name)
+        // }, 10)
 
         this.onLoop(() => {
           for (let i = 0, il = dispatcher.getNumManifolds(); i < il; i++) {
@@ -337,13 +382,28 @@ export default {
               character = body1
               world = body0
             }
+            // if (world) {
+            //   console.log(world.updaterTarget.name)w
+            // }
             if (character && world) {
               // window.character = character
-              let name = world.updaterTarget.name
-              let vel = character.getLinearVelocity()
-              if (name === 'Cube006' && (Math.abs(vel.y()) <= 0) && (Math.abs(vel.x()) >= 2) && (Math.abs(vel.z()) >= 2)) {
-                tt(character)
-              }
+              // let name = world.updaterTarget.name
+              // this.$emit('collision', { worldMeshName: name, worldBody: world, worldMesh: world.updaterTarget, characterBody: character, characterMesh: character.updaterTarget })
+
+              // let vel = character.getLinearVelocity()
+              // let canJump = (vel.y() <= 0)
+              // let isRunning = (Math.abs(vel.x()) >= 1) && (Math.abs(vel.z()) >= 1)
+              // if (name === 'Cube006' && canJump && isRunning) {
+              //   throttledMiniJump(character)
+              // }
+
+              // // isConstraint(world.updaterTarget) &&
+              // if (allowJump(world.updaterTarget) && canJump && isRunning) {
+              //   throttledMiniJump(character, world)
+              // } else {
+              //   console.log(name, 'false')
+              // }
+              // console.log((Math.abs(vel.y())), (Math.abs(vel.x())), (Math.abs(vel.z())))
               // console.log(world.updaterTarget.name)
             }
           }
@@ -357,29 +417,29 @@ export default {
       const target = new Vector3()
       const transformM4 = new Matrix4()
 
-      let getShapeFromVisual = (fragment) => {
+      let getShapeFromMesh = (mesh, rootScale = 1) => {
         const originalHull = new Ammo.btConvexHullShape()
         originalHull.setMargin(margin)
 
-        let geo = fragment.geometry
+        let geo = mesh.geometry
         geo.computeBoundingBox()
 
         geo.boundingBox.getCenter(target)
         transformM4.makeTranslation(target.x, target.y, target.z)
-        if (fragment.updateMatrices) {
-          fragment.updateMatrices()
+        if (mesh.updateMatrices) {
+          mesh.updateMatrices()
         }
 
         const inverse = new Matrix4()
-        const components = geo.attributes.position.array
-        for (let i = 0; i < components.length; i += 3) {
-          transformM4.multiplyMatrices(inverse, fragment.matrixWorld)
+        const rawVertexData = geo.attributes.position.array
+        for (let i = 0; i < rawVertexData.length; i += 3) {
+          transformM4.multiplyMatrices(inverse, mesh.matrixWorld)
           vertex
-            .set(components[i], components[i + 1], components[i + 2])
+            .set(rawVertexData[i], rawVertexData[i + 1], rawVertexData[i + 2])
             .applyMatrix4(transformM4)
             .sub(center)
           btVertex.setValue(vertex.x, vertex.y, vertex.z)
-          originalHull.addPoint(btVertex, i === components.length - 3)
+          originalHull.addPoint(btVertex, i === rawVertexData.length - 3)
         }
         Ammo.destroy(btVertex)
 
@@ -399,7 +459,7 @@ export default {
           collisionShape.destroy()
         })
 
-        const localScale = new Ammo.btVector3(fragment.scale.x, fragment.scale.y, fragment.scale.z)
+        const localScale = new Ammo.btVector3(rootScale * mesh.scale.x, rootScale * mesh.scale.y, rootScale * mesh.scale.z)
         collisionShape.setLocalScaling(localScale)
 
         Ammo.destroy(localScale)
@@ -408,30 +468,32 @@ export default {
       }
 
       let makeRoom = async () => {
+        // let fbx = await loadFBX(require('file-loader!./room/cool-office.fbx'))
         let fbx = await loadFBX(require('file-loader!./room/factory-simple-fbx.fbx'))
         // let fbx = await loadFBX(require('file-loader!./room/space-walk.fbx'))
         let silver = await loadTexture(require('./matcap/silver.png'))
+        let matcapSilver = new MeshMatcapMaterial({ matcap: silver, side: DoubleSide })
 
+        let rootScale = 1
+        // fbx.scale.x = rootScale
+        // fbx.scale.y = rootScale
+        // fbx.scale.z = rootScale
         this.o3d.add(fbx)
 
         fbx.traverse((item) => {
           if (item.isMesh) {
-            // this.rayplay.add(item, () => {
-            //   console.log(item.name)
-            // })
 
-            item.material = new MeshMatcapMaterial({ matcap: silver, side: DoubleSide })
+            item.material = matcapSilver
 
-            let shape = getShapeFromVisual(item)
-            let visual = item
-            makeGround(shape, visual)
-
-            // item.material = new MeshMatcapMaterial({ color: 0xffff00, matcap: silver, side: DoubleSide })
+            let shape = getShapeFromMesh(item, rootScale)
+            makeGround(shape, item)
 
             item.material.side = DoubleSide
             item.material.transparent = true
           }
         })
+
+
       }
 
       makeRoom()

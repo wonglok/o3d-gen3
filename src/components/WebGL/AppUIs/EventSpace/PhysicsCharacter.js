@@ -461,13 +461,17 @@ export class CharActions {
       if (active) {
         if (active.type === 'doOnce') {
           if (!active.action.isRunning()) {
+            this.base.canJump = true
             active.action.repetitions = 1
             mixer.stopAllAction()
             active.action.fadeIn(0.15).play()
             clearTimeout(actionTimeoutID)
             actionTimeoutID = setTimeout(() => {
               idle.crossFadeFrom(active.action, 0.23).play()
+              this.base.canJump = true
             }, active.action.duration * 1000 - 0.23 * 1000)
+          } else {
+            this.base.canJump = false
           }
         } else {
           if (!active.action.isRunning()) {
@@ -772,12 +776,13 @@ export class CharacterControl {
     var startTransform = new Ammo.btTransform();
 
     let size = this.base.size
-    let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
+    // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
+    let makeSquareShape = (x, y) => new Ammo.btCapsuleShape(x, y)
     let squareCharBox = makeSquareShape(size.x, size.y, size.z)
     let targetO3 = this.base.o3d
     // targetO3.rotation.x = Math.PI * 0.5
 
-    // let mesh = new Mesh(new BoxBufferGeometry(size.x * 2.0, size.y * 2.0, size.z * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
+    // let mesh = new Mesh(new SphereBufferGeometry(size.y * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
     // targetO3.add(mesh)
     // targetO3.position.x = 0
     targetO3.position.y = size.y + 10
@@ -792,9 +797,10 @@ export class CharacterControl {
 
     var shape = squareCharBox
     var mass = 1;
+    let margin = 0.05;
     var localInertia = new Ammo.btVector3(0, 0, 0);
     shape.calculateLocalInertia(mass, localInertia);
-    shape.setMargin(10)
+    shape.setMargin(margin)
 
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
@@ -968,15 +974,14 @@ export class CharacterControl {
       // //   body.applyCentralImpulse(velocity)
       // // }
 
-      if (this.keys.space && !this.isJumping && !this.keys.forward && !this.keys.backward && !this.keys.left && !this.keys.right) {
+      if (this.keys.space && this.base.canJump && !this.keys.forward && !this.keys.backward && !this.keys.left && !this.keys.right) {
         // body.setDamping(0.97, 0.97)
-        this.isJumping = true
         setTimeout(() => {
-          velocity.setValue(0, 130, 0)
+          velocity.setValue(0, 12.5, 0)
           body.applyCentralImpulse(velocity)
 
           setTimeout(() => {
-            this.isJumping = false
+            // this.base.canJump = true
             // velocity.setValue(0, -30, 0)
             // body.applyCentralImpulse(velocity)
           }, 450)
@@ -1024,11 +1029,15 @@ export class Character {
     this.base = base
     this.actor = actor
     this.scale = 10
+    this.chroma = base.chroma
 
     this.mixer = new Mixer({ base, actor })
     this.bones = {}
     this.mapCharBones({ actor })
     this.setupCharTextureEncoding({ actor })
+    if (this.base.chroma) {
+      this.setupChroma({ actor, chroma: this.base.chroma })
+    }
     CharActions.preload()
 
     this.actions = new CharActions({ base })
@@ -1042,6 +1051,15 @@ export class Character {
         this.actor.visible = true
       })
   }
+
+  setupChroma ({ actor, chroma }) {
+    actor.traverse(item => {
+      if (item.isMesh) {
+        item.material.envMap = chroma.out.envMap
+      }
+    })
+  }
+
   mapCharBones ({ actor }) {
     let getEnd = (name) => {
       name = name.replace('mixamorig1', 'mixamorig')
@@ -1103,15 +1121,17 @@ export class Character {
 }
 
 export class PhysicsCharacter extends EventDispatcher {
-  constructor ({ onLoop, onResize, Ammo }) {
+  constructor ({ onLoop, onResize, Ammo, initPos = [0, 250, 0], chroma }) {
     super({})
+    this.chroma = chroma
     this.size = {
       x: 13 / 2,
       y: 13,
       z: 13 / 2,
     }
     this.moodType = 'peaceful'
-    this.initPos = [126.0895767211914, 100, 364.65924072265625]
+    this.initPos = initPos
+    // this.initPos = [126.0895767211914, 150, 364.65924072265625]
     // this.initPos = [0.0, 50, 0.0]
     this.onLoop = onLoop
     this.onResize = onResize
@@ -1121,8 +1141,8 @@ export class PhysicsCharacter extends EventDispatcher {
     this.done = this.setup()
   }
   async setup () {
-    // this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
-    this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
+    this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+    // this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
     this.scene = this.glb.scene
     this.scene.position.y = this.size.y * -1
     this.o3d.add(this.scene)
