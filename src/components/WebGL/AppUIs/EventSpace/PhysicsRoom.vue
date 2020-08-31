@@ -76,7 +76,7 @@
 
     </div>
 
-
+    <LoadingGUI></LoadingGUI>
 
   </div>
 </template>
@@ -169,6 +169,10 @@ export default {
       //   // 'Cube041_Cube016'
       // ]
       // let isConstraint = (item) => ((ConstraintList.includes(item.name) || item.name.indexOf('Plane') !== -1) && !ExcludeList.includes(item.name))
+      let initPos = [
+        0, 80, 0
+      ]
+      initPos = [126.0895767211914, 50, 364.65924072265625]
 
       var gravityConstant = 9.89;
       let Ammo = await loadAmmo()
@@ -294,10 +298,7 @@ export default {
         makeFallingItem(square, mesh)
       })
 
-      let initPos = [
-        0, 80, 0
-      ]
-      initPos = [126.0895767211914, 50, 364.65924072265625]
+
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, loop: this.onLoop, res: 128, color: new Color('#ffffff') })
       let PhysicsCharacter = require('./PhysicsCharacter.js').PhysicsCharacter
       let CamLock = require('./PhysicsCharacter.js').CamLock
