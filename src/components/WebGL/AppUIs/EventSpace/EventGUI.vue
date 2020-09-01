@@ -106,5 +106,24 @@ export default {
 </script>
 
 <style>
-
+.moves-box{
+  height: 170px;
+}
+@screen lg {
+  .moves-box{
+    height: calc(100% - 250px);
+  }
+}
+.touch-action-manipulation{
+  touch-action: manipulation;
+}
+.bg-transp-black{
+  background-color: rgba(0,0,0,0.3);
+}
+.bg-transp-white{
+  background-color: rgba(255,255,255,0.3);
+}
+.touch-action-manipulation {
+  touch-action: manipulation;
+}
 </style>
