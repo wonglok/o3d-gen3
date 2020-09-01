@@ -80,7 +80,7 @@ class CustomWebGLCubeRenderTarget extends WebGLCubeRenderTarget {
 }
 
 export class ShaderCubeChromatics {
-  constructor ({ renderer, loop, res = 128, color = new Color('#ffffff') }) {
+  constructor ({ renderer, onLoop, res = 128, color = new Color('#ffffff') }) {
     this.renderer = renderer
     this.resX = res || 128
     this.renderTargetCube = new CustomWebGLCubeRenderTarget(this.resX, { format: RGBFormat, magFilter: LinearFilter, minFilter: LinearFilter })
@@ -222,7 +222,7 @@ export class ShaderCubeChromatics {
     this.renderTargetCube.texture.mapping = CubeReflectionMapping
 
     this.renderTargetCube.setup(renderer, this.renderTargetPlane.texture)
-    loop(() => {
+    onLoop(() => {
       uniforms.time.value = window.performance.now() * 0.001
       let camera = this.camera
       let renderer = this.renderer

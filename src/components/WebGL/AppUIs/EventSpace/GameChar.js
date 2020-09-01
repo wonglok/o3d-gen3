@@ -208,6 +208,22 @@ export class CamLock {
         // head.add(this.camera)''
       }
     })
+
+    this.element.addEventListener('touchstart', () => {
+      this.mode = 'follow'
+    })
+    this.element.addEventListener('mousedown', () => {
+      this.mode = 'follow'
+    })
+    this.element.addEventListener('touchmove', () => {
+      this.mode = 'follow'
+    })
+    this.element.addEventListener('wheel', () => {
+      this.mode = 'follow'
+    })
+    window.addEventListener('keydown', () => {
+      this.mode = 'chase'
+    })
   }
 }
 
@@ -866,8 +882,8 @@ export class CharacterControl {
 
     let size = this.base.size
     // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
-    let makeSquareShape = (x, y) => new Ammo.btCapsuleShape(x, y)
-    let squareCharBox = makeSquareShape(size.x, size.y, size.z)
+    let makeCapsuleShape = (x, y) => new Ammo.btCapsuleShape(x, y)
+    let squareCharBox = makeCapsuleShape(size.x, size.y, size.z)
     let targetO3 = this.base.o3d
     // targetO3.rotation.x = Math.PI * 0.5
 
@@ -875,7 +891,7 @@ export class CharacterControl {
     // targetO3.add(mesh)
     // targetO3.position.x = 0
     targetO3.position.y = size.y + 10
-    targetO3.position.fromArray(this.base.initPos)
+    targetO3.position.fromArray(this.base.birthPlace)
     targetO3.rotation.y = Math.PI
 
     // targetO3.position.z = 0
@@ -907,8 +923,8 @@ export class CharacterControl {
     body.setDamping(0.95, 0.95)
     // body.setMassProps(1, new Ammo.btVector3(1, 1, 1))
 
-    body.setCcdMotionThreshold(1e-7)
-    body.setCcdSweptSphereRadius(0.50)
+    // body.setCcdMotionThreshold(1e-7)
+    // body.setCcdSweptSphereRadius(0.50)
 
     // let steer = new Object3D()
     let v3 = new Vector3()
@@ -978,14 +994,14 @@ export class CharacterControl {
       }
 
       if (this.keys.turnLeft) {
-        angularVelocity.setValue(0, 1.5, 0)
+        angularVelocity.setValue(0, 1.75, 0)
         body.setAngularVelocity(angularVelocity)
 
         angularFactor.setValue(0, 1, 0)
         body.setAngularFactor(angularFactor)
       }
       if (this.keys.turnRight) {
-        angularVelocity.setValue(0, -1.5, 0)
+        angularVelocity.setValue(0, -1.75, 0)
         body.setAngularVelocity(angularVelocity)
 
         angularFactor.setValue(0, 1, 0)
@@ -995,6 +1011,8 @@ export class CharacterControl {
 
     targetO3.userData.isChar = true
     body.updaterTarget = targetO3
+
+    body.isChar = true
 
     const localScale = new Ammo.btVector3(1, 1, 1)
     shape.setLocalScaling(localScale)
@@ -1034,6 +1052,7 @@ export class Character {
         this.actor.visible = true
       })
   }
+
 
   setupChroma ({ actor, chroma }) {
     actor.traverse(item => {
@@ -1103,19 +1122,22 @@ export class Character {
   }
 }
 
-export class PhysicsCharacter extends EventDispatcher {
-  constructor ({ onLoop, onResize, Ammo, initPos = [0, 250, 0], chroma }) {
+export class GameChar extends EventDispatcher {
+  constructor ({ onLoop, onResize, birthPlace = [0, 250, 0], chroma, ammoWorld }) {
     super({})
+    this.ammoWorld = ammoWorld
+    let { Ammo } = this.ammoWorld
+
     this.chroma = chroma
     this.size = {
-      x: 13 / 2,
-      y: 13,
-      z: 13 / 2,
+      x: 16 / 2,
+      y: 20,
+      z: 16 / 2,
     }
     this.moodType = 'peaceful'
-    this.initPos = initPos
-    // this.initPos = [126.0895767211914, 150, 364.65924072265625]
-    // this.initPos = [0.0, 50, 0.0]
+    this.birthPlace = birthPlace
+    // this.birthPlace = [126.0895767211914, 150, 364.65924072265625]
+    // this.birthPlace = [0.0, 50, 0.0]
     this.onLoop = onLoop
     this.onResize = onResize
     this.Ammo = Ammo
@@ -1127,11 +1149,17 @@ export class PhysicsCharacter extends EventDispatcher {
     this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
     // this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
     this.scene = this.glb.scene
-    this.scene.position.y = this.size.y * -1
+    this.scene.position.y = (this.size.y * -1) + (this.size.x * -0.5) + this.size.y * 0.22
     this.o3d.add(this.scene)
 
     this.character = new Character({ actor: this.scene, base: this })
     this.control = new CharacterControl({ base: this })
+  }
+
+  waitForSetup () {
+    return this.done.then(() => {
+      return this.doneMixer
+    })
   }
 }
 
