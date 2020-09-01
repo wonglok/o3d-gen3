@@ -1149,7 +1149,7 @@ export class GameChar extends EventDispatcher {
     this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
     // this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
     this.scene = this.glb.scene
-    this.scene.position.y = (this.size.y * -1) + (this.size.x * -0.5) + this.size.y * 0.22
+    this.scene.position.y = (this.size.y * -1) + (this.size.x * -0.5) + this.size.y * 0.3
     this.o3d.add(this.scene)
 
     this.character = new Character({ actor: this.scene, base: this })
