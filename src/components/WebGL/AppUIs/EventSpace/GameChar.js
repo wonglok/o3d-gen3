@@ -883,14 +883,14 @@ export class CharacterControl {
     let size = this.base.size
     // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
     let makeCapsuleShape = (x, y) => new Ammo.btCapsuleShape(x, y)
-    let squareCharBox = makeCapsuleShape(size.x, size.y, size.z)
+    let characterCapsuleShape = makeCapsuleShape(size.x, size.y, size.z)
     let targetO3 = this.base.o3d
     // targetO3.rotation.x = Math.PI * 0.5
 
     // let mesh = new Mesh(new SphereBufferGeometry(size.y * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
     // targetO3.add(mesh)
     // targetO3.position.x = 0
-    targetO3.position.y = size.y + 10
+    // targetO3.position.y = size.y + 10
     targetO3.position.fromArray(this.base.birthPlace)
     targetO3.rotation.y = Math.PI
 
@@ -900,7 +900,7 @@ export class CharacterControl {
     startTransform.setOrigin(new Ammo.btVector3(targetO3.position.x, targetO3.position.y, targetO3.position.z));
     startTransform.setRotation(new Ammo.btQuaternion(targetO3.quaternion.x, targetO3.quaternion.y, targetO3.quaternion.z, targetO3.quaternion.w))
 
-    var shape = squareCharBox
+    var shape = characterCapsuleShape
     var mass = 1;
     let margin = 0.05;
     var localInertia = new Ammo.btVector3(0, 0, 0);
@@ -910,7 +910,6 @@ export class CharacterControl {
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
     var body = new Ammo.btRigidBody(rbInfo);
-
 
     // let origin3 = new Ammo.btVector3(0, 0, 0)
     // let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
@@ -1162,4 +1161,3 @@ export class GameChar extends EventDispatcher {
     })
   }
 }
-
