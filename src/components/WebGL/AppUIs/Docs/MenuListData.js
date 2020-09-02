@@ -25,8 +25,8 @@ export const MenuDocsData = [
   },
   {
     type: 'router',
-    name: 'Virtual Room (2nd CPU)',
-    path: '/docs/event-space-2nd-cpu',
+    name: 'Virtual Room (v2)',
+    path: '/docs/event-space-v2',
     component: () => import('../EventSpaceCPU2/EventSpaceCPU2.vue')
   }
 ]
