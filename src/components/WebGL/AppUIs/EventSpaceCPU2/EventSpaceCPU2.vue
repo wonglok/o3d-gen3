@@ -35,9 +35,9 @@ export default {
       this.scene = new Scene()
       this.camera = new PCamera({ element: this.element, onResize: this.onResize })
 
-      this.camera.position.y = 50
-      this.camera.position.z = -50
-      this.camera.lookAt(new Vector3(0, 50, 50))
+      // this.camera.position.y = 50
+      // this.camera.position.z = -50
+      // this.camera.lookAt(new Vector3(0, 50, 50))
       this.scene.add(this.o3d)
       this.scene.background = new Color('#232323')
 
@@ -84,10 +84,10 @@ export default {
       // ground()
 
 
-      let makeFactory = () => {
+      let makeFactory = async () => {
         let RoomFactory = require('./RoomFactory.js').RoomFactory
         let room = new RoomFactory({ o3d: this.o3d, addMesh: v => this.ammo.addMesh(v) })
-
+        await room.waitForSetup()
         this.camera.position.fromArray(room.birthPlace)
         this.camera.lookAt(new Vector3().fromArray(room.birthPlace))
 

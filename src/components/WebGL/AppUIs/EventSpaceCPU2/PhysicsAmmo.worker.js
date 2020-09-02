@@ -87,6 +87,9 @@ export class AmmoCharacterControl {
         w: rot.w()
       })
 
+      if (keys.isDownAny) {
+        body.activate()
+      }
 
       angularFactor.setValue(0, 0, 0)
       body.setAngularFactor(angularFactor)
@@ -265,7 +268,7 @@ export class AmmoWorld extends EventDispatcher {
 
       this.replyAll(this.applyPhysicsMap)
       //
-    }, 1000 / 60)
+    }, 1000 / 70)
   }
   subscribe (subscriber) {
     this.fncs.push(subscriber)

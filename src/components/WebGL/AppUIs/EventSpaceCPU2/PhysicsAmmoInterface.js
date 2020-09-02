@@ -20,10 +20,11 @@ export class PhysicsAmmoInterface {
       for (let [uuid, update] of  updateMap.entries()) {
         let mesh = this.updateMeshMap.get(uuid)
         // console.log(update.position, update.quaternion)
-        mesh.position.copy(update.position)
-        mesh.quaternion.copy(update.quaternion)
-
-        console.log(mesh.name)
+        if (update && mesh) {
+          mesh.position.copy(update.position)
+          mesh.quaternion.copy(update.quaternion)
+        }
+        // console.log(update.position, update.quaternion)
       }
     })
   }

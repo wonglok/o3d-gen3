@@ -1167,7 +1167,7 @@ export class EventChar extends EventDispatcher {
       let newStr = JSON.stringify(this.keys)
       if (newStr !== this.lastStr) {
         this.lastStr = newStr
-        directAmmoWorld.syncKeys({ keys: this.keys })
+        directAmmoWorld.syncKeys({ keys: JSON.parse(JSON.stringify(this.keys)) })
       }
     })
   }
