@@ -185,7 +185,7 @@ export class AmmoWorld extends EventDispatcher {
     this.you = false
     this.tasks = []
   }
-  createYou ({ size, uuid, position, quaternion }) {
+  async createYou ({ size, uuid, position, quaternion }) {
     position = new Vector3().fromArray(position)
     quaternion = new Quaternion().fromArray(quaternion)
     this.you = new AmmoCharacterControl({ base: this, size, uuid, position, quaternion })
