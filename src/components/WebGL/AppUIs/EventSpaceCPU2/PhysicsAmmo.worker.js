@@ -268,7 +268,7 @@ export class AmmoWorld extends EventDispatcher {
 
       this.replyAll(this.applyPhysicsMap)
       //
-    }, 1000 / 70)
+    }, 1000 / 60)
   }
   subscribe (subscriber) {
     this.fncs.push(subscriber)
