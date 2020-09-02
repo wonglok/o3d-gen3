@@ -27,7 +27,7 @@ export const MenuDocsData = [
     type: 'router',
     name: 'Virtual Room (v2)',
     path: '/docs/event-space-v2',
-    component: () => import('../EventSpaceCPU2/EventSpaceCPU2.vue')
+    component: () => import('../EventSpaceV2/EventSpaceV2.vue')
   }
 ]
 export const MenuListData = [
