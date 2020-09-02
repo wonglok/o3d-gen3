@@ -999,7 +999,7 @@ export class EventChar extends EventDispatcher {
     this.character = new Character({ actor: this.scene, base: this })
     // this.control = new CharacterControl({ base: this })
     this.o3d.position.fromArray(this.birthPlace)
-    this.o3d.quaternion.y = Math.PI
+    this.o3d.rotation.y = Math.PI
     this.o3d.name = 'character'
 
     let uuid = this.o3d.uuid

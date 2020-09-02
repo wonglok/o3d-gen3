@@ -10,7 +10,7 @@
 
 <script>
 import { RenderRoot } from '../../Core/RenderRoot'
-import { Scene, Color, MeshBasicMaterial, Mesh, Vector3, SphereBufferGeometry } from 'three'
+import { Scene, Color, MeshBasicMaterial, Mesh, TorusBufferGeometry } from 'three'
 import { PCamera } from '../../Core/PCamera'
 import { RayPlay } from '../../Core/RayPlay'
 import { PhysicsAmmoInterface } from './PhysicsAmmoInterface'
@@ -35,9 +35,6 @@ export default {
       this.scene = new Scene()
       this.camera = new PCamera({ element: this.element, onResize: this.onResize })
 
-      // this.camera.position.y = 50
-      // this.camera.position.z = -50
-      // this.camera.lookAt(new Vector3(0, 50, 50))
       this.scene.add(this.o3d)
       this.scene.background = new Color('#232323')
 
@@ -49,7 +46,7 @@ export default {
 
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, onLoop: this.onLoop, res: 128, color: new Color('#ffffff') })
 
-      let sphere = new SphereBufferGeometry(30, 42, 42)
+      let sphere = new TorusBufferGeometry(20, 4.1, 15, 145)
       let fallingBox = () => {
         // falling box
         let mat = new MeshBasicMaterial({ color: new Color('#ffffff'), wireframe: false, envMap: chroma.out.envMap })
@@ -57,6 +54,7 @@ export default {
         mesh.position.y = 150
         mesh.position.z = (Math.random() - 0.5) * -500
         mesh.position.x = (Math.random() - 0.5) * -500
+
         this.o3d.add(mesh)
 
         this.ammo.addMesh({
@@ -65,7 +63,7 @@ export default {
           rootScale: 1
         })
       }
-      for (let i = 0; i < 8; i++) {
+      for (let i = 0; i < 10; i++) {
         fallingBox()
       }
 
@@ -83,13 +81,13 @@ export default {
       // }
       // ground()
 
-
       let makeFactory = async () => {
         let RoomFactory = require('./RoomFactory.js').RoomFactory
         let room = new RoomFactory({ o3d: this.o3d, addMesh: v => this.ammo.addMesh(v) })
-        await room.waitForSetup()
         this.camera.position.fromArray(room.birthPlace)
-        this.camera.lookAt(new Vector3().fromArray(room.birthPlace))
+
+        await room.waitForSetup()
+        // this.camera.lookAt(new Vector3().fromArray(room.birthPlace))
 
         makeChar({ birthPlace: room.birthPlace })
       }
@@ -106,6 +104,7 @@ export default {
         this.game = eventChar
 
         await eventChar.waitForSetup()
+
         this.o3d.add(eventChar.o3d)
 
         let CamLock = require('./EventChar.js').CamLock

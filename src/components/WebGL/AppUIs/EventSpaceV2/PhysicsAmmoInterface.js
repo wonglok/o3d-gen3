@@ -14,7 +14,7 @@ export class PhysicsAmmoInterface {
     return this.done
   }
   async run () {
-    this.ammoWorld = await new this.factory.AmmoWorld({ mode: this.mode })
+    this.ammoWorld = await new this.factory.AmmoWorld({ mode: this.mode, onLoop: this.onLoop })
     await this.ammoWorld.waitForSetup()
     this.subscribe((updateMap) => {
       this.updateMap = updateMap
@@ -23,6 +23,7 @@ export class PhysicsAmmoInterface {
       // this.ammoWorld.exec().then(v => {
       //   this.updateMap = v
       // })
+
       if (this.updateMap) {
         let ent = this.updateMap.entries()
         for (let [uuid, update] of ent) {
@@ -80,6 +81,7 @@ export class PhysicsAmmoInterface {
     geometry.boundingBox.getCenter(target)
 
     this.ammoWorld.addMesh({
+      geoUUID: mesh.geometry.uuid,
       uuid: mesh.uuid,
       target: target.toArray(),
       position: mesh.position.toArray(),

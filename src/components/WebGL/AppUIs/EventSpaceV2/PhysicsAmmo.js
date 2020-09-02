@@ -18,22 +18,12 @@ export class AmmoCharacterControl {
     var startTransform = new Ammo.btTransform();
 
     let size = this.size
-    // let makeSquareShape = (x, y, z) => new Ammo.btBoxShape(new Ammo.btVector3(x, y, z));
     let makeCapsuleShape = (x, y) => new Ammo.btCapsuleShape(x, y)
     let characterCapsuleShape = makeCapsuleShape(size.x, size.y, size.z)
     let targetO3 = new Object3D()
-    // targetO3.rotation.x = Math.PI * 0.5
-
-    // let mesh = new Mesh(new SphereBufferGeometry(size.y * 2.0, 10, 10, 10), new MeshBasicMaterial({ wireframe: true, color: 0xffff00 }))
-    // targetO3.add(mesh)
-    // targetO3.position.x = 0
-    // targetO3.position.y = size.y + 10
 
     targetO3.position.copy(position)
     targetO3.quaternion.copy(quaternion)
-    // targetO3.rotation.y = Math.PI
-
-    // targetO3.position.z = 0
 
     startTransform.setIdentity();
     startTransform.setOrigin(new Ammo.btVector3(targetO3.position.x, targetO3.position.y, targetO3.position.z));
@@ -49,9 +39,6 @@ export class AmmoCharacterControl {
     var myMotionState = new Ammo.btDefaultMotionState(startTransform);
     var rbInfo = new Ammo.btRigidBodyConstructionInfo(mass, myMotionState, shape, localInertia);
     var body = new Ammo.btRigidBody(rbInfo);
-
-    // let origin3 = new Ammo.btVector3(0, 0, 0)
-    // let quaternion = new Ammo.btQuaternion(0, 0, 0, 1)
 
     let velocity = new Ammo.btVector3(0, 0, 0)
     let angularVelocity = new Ammo.btVector3(0, 0, 0)
@@ -125,7 +112,6 @@ export class AmmoCharacterControl {
         body.applyCentralImpulse(velocity)
       }
 
-
       if (keys.right) {
         v3.x = -speed
         v3.y = 0
@@ -137,7 +123,7 @@ export class AmmoCharacterControl {
         body.applyCentralImpulse(velocity)
       }
 
-      if (keys.space && this.base.canJump && !this.keys.forward && !this.keys.backward && !this.keys.left && !this.keys.right) {
+      if (keys.space && !keys.forward && !keys.backward && !keys.left && !keys.right) {
         // body.setDamping(0.97, 0.97)
         setTimeout(() => {
           velocity.setValue(0, 12.5, 0)
@@ -159,15 +145,15 @@ export class AmmoCharacterControl {
         angularFactor.setValue(0, 1, 0)
         body.setAngularFactor(angularFactor)
       }
-
     })
-
   }
 }
 
 export class AmmoWorld extends EventDispatcher {
-  constructor({ mode = 'auto' }) {
+  constructor({ mode = 'auto', onLoop }) {
     super()
+    this.shapeCache = new Map()
+    this.onLoop = onLoop
     this.canRun = true
     this.clock = new Clock()
     this.fncs = []
@@ -223,7 +209,7 @@ export class AmmoWorld extends EventDispatcher {
     this.dispatcher = dispatcher
 
     var transform = new Ammo.btTransform();
-    this.execInterval = setInterval(() => {
+    this.onLoop(() => {
       if (this.mode === 'manual') {
         if (!this.ready) {
           return
@@ -244,7 +230,8 @@ export class AmmoWorld extends EventDispatcher {
         console.log(e)
       }
 
-      for (let [uuid, body] of  this.bodiesMap.entries()) {
+      let bodies = this.bodiesMap.entries()
+      for (let [uuid, body] of bodies) {
         body.getMotionState().getWorldTransform(transform)
         var origin = transform.getOrigin()
 
@@ -270,15 +257,13 @@ export class AmmoWorld extends EventDispatcher {
       }
 
       this.replyAll(this.applyPhysicsMap)
-      //
-      // return this.applyPhysicsMap
-    }, 1000 / 60)
+    })
   }
   subscribe (subscriber) {
     this.fncs.push(subscriber)
   }
 
-  addMesh ({ uuid, array, target, position, quaternion, matrixWorld, scale, rootScale, mass }) {
+  addMesh ({ geoUUID, uuid, array, target, position, quaternion, matrixWorld, scale, rootScale, mass }) {
     let center = new Vector3()
     target = new Vector3().fromArray(target)
     scale = new Vector3().fromArray(scale)
@@ -286,7 +271,8 @@ export class AmmoWorld extends EventDispatcher {
     quaternion = new Quaternion().fromArray(quaternion)
     matrixWorld = new Matrix4().fromArray(matrixWorld)
 
-    let shape = this.getShapeFromInfo({ array, rootScale, target, scale, matrixWorld, center })
+    let shape = this.shapeCache.has(geoUUID) ? this.shapeCache.get(geoUUID) : this.getShapeFromInfo({ array, rootScale, target, scale, matrixWorld, center })
+    this.shapeCache.set(geoUUID, shape)
     let body = this.makeBody({ uuid, shape, mass, position, quaternion, scale })
 
     this.dynamicsWorld.addRigidBody(body)
@@ -317,24 +303,23 @@ export class AmmoWorld extends EventDispatcher {
       originalHull.addPoint(btVertex, i === rawVertexData.length - 3)
     }
 
-    let collisionShape = originalHull
-    collisionShape.type = 'hull'
-    collisionShape.setMargin(margin)
-    collisionShape.destroy = () => {
-      for (let res of collisionShape.resources || []) {
+    originalHull.type = 'hull'
+    originalHull.setMargin(margin)
+    originalHull.destroy = () => {
+      for (let res of originalHull.resources || []) {
         Ammo.destroy(res)
       }
-      if (collisionShape.heightfieldData) {
-        Ammo._free(collisionShape.heightfieldData)
+      if (originalHull.heightfieldData) {
+        Ammo._free(originalHull.heightfieldData)
       }
-      Ammo.destroy(collisionShape)
+      Ammo.destroy(originalHull)
     }
 
     let localScale = new Ammo.btVector3(rootScale * scale.x, rootScale * scale.y, rootScale * scale.z)
-    collisionShape.setLocalScaling(localScale)
+    originalHull.setLocalScaling(localScale)
     Ammo.destroy(localScale)
 
-    return collisionShape
+    return originalHull
   }
 
   makeBody ({ uuid, shape, mass, position, quaternion, scale }) {
