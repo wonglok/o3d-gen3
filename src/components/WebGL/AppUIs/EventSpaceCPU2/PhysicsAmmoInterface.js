@@ -1,6 +1,6 @@
 import PhysicsFactoryClass from 'comlink-loader!./PhysicsAmmo.worker'
 import * as Comlink from 'comlink'
-import { BufferGeometry, Vector3, Vector4 } from 'three'
+import { BufferGeometry, Vector3 } from 'three'
 
 export class PhysicsAmmoInterface {
   constructor ({ mode = 'auto', onLoop }) {
@@ -20,6 +20,9 @@ export class PhysicsAmmoInterface {
       this.updateMap = updateMap
     })
     this.onLoop(() => {
+      // this.ammoWorld.exec().then(v => {
+      //   this.updateMap = v
+      // })
       if (this.updateMap) {
         let ent = this.updateMap.entries()
         for (let [uuid, update] of ent) {

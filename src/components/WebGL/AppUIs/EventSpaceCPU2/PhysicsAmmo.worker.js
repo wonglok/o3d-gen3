@@ -225,7 +225,7 @@ export class AmmoWorld extends EventDispatcher {
     this.dispatcher = dispatcher
 
     var transform = new Ammo.btTransform();
-    this.interv = setInterval(() => {
+    this.execInterval = setInterval(() => {
       if (this.mode === 'manual') {
         if (!this.ready) {
           return
@@ -237,7 +237,7 @@ export class AmmoWorld extends EventDispatcher {
       }
 
       var deltaTime = this.clock.getDelta();
-      dynamicsWorld.stepSimulation(deltaTime, 10);
+      dynamicsWorld.stepSimulation(deltaTime, 7);
       // let delta = this.clock.getDelta()
 
       try {
@@ -273,6 +273,7 @@ export class AmmoWorld extends EventDispatcher {
 
       this.replyAll(this.applyPhysicsMap)
       //
+      // return this.applyPhysicsMap
     }, 1000 / 60)
   }
   subscribe (subscriber) {
