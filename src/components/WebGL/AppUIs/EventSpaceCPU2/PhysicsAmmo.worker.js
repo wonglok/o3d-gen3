@@ -62,6 +62,8 @@ export class AmmoCharacterControl {
 
     body.setDamping(0.95, 0.95)
 
+    body.uuid = uuid
+
     this.base.dynamicsWorld.addRigidBody(body)
     this.base.bodiesMap.set(uuid, body)
 

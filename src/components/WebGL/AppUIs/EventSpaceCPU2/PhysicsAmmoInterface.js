@@ -7,7 +7,7 @@ export class PhysicsAmmoInterface {
     this.props = props
     this.factory = new PhysicsFactoryClass()
     this.done = this.run()
-    this.meshMap = new Map()
+    this.updateMeshMap = new Map()
   }
   async waitForSetup () {
     return this.done
@@ -18,10 +18,12 @@ export class PhysicsAmmoInterface {
 
     this.subscribe((updateMap) => {
       for (let [uuid, update] of  updateMap.entries()) {
-        let mesh = this.meshMap.get(uuid)
+        let mesh = this.updateMeshMap.get(uuid)
         // console.log(update.position, update.quaternion)
         mesh.position.copy(update.position)
         mesh.quaternion.copy(update.quaternion)
+
+        console.log(mesh.name)
       }
     })
   }
@@ -40,8 +42,11 @@ export class PhysicsAmmoInterface {
   subscribe (v) {
     this.ammoWorld.subscribe(Comlink.proxy(v))
   }
+  addUpdateItem (mesh) {
+    this.updateMeshMap.set(mesh.uuid, mesh)
+  }
   addMesh ({ mesh, rootScale = 1, mass = 0.1 }) {
-    this.meshMap.set(mesh.uuid, mesh)
+    this.updateMeshMap.set(mesh.uuid, mesh)
 
     let geometry = mesh.geometry
 

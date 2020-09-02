@@ -1154,14 +1154,15 @@ export class EventChar extends EventDispatcher {
     // this.control = new CharacterControl({ base: this })
     this.o3d.position.fromArray(this.birthPlace)
     this.o3d.quaternion.y = Math.PI
+    this.o3d.name = 'character'
 
     let uuid = this.o3d.uuid
     let position = this.o3d.position.toArray()
     let quaternion = this.o3d.quaternion.toArray()
     let directAmmoWorld = this.ammo.getDirect()
-    directAmmoWorld.createYou({ size: this.size, uuid, position, quaternion })
+    await directAmmoWorld.createYou({ size: this.size, uuid, position, quaternion })
 
-    this.ammo.meshMap.set(uuid, this.o3d)
+    this.ammo.addUpdateItem(this.o3d)
     this.onLoop(() => {
       let newStr = JSON.stringify(this.keys)
       if (newStr !== this.lastStr) {
