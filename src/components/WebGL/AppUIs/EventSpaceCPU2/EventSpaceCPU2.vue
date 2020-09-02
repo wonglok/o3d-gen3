@@ -44,7 +44,7 @@ export default {
       this.rayplay = new RayPlay({ mounter: this.element, onResize: this.onResize, onLoop: this.onLoop, camera: this.camera, onClean: this.onClean })
     },
     async initSystem () {
-      this.ammo = new PhysicsAmmoInterface({ mode: 'manual' })
+      this.ammo = new PhysicsAmmoInterface({ mode: 'manual', onLoop: this.onLoop })
       await this.ammo.waitForSetup()
 
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, onLoop: this.onLoop, res: 128, color: new Color('#ffffff') })

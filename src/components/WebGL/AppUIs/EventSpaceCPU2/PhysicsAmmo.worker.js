@@ -144,7 +144,7 @@ export class AmmoCharacterControl {
         setTimeout(() => {
           velocity.setValue(0, 12.5, 0)
           body.applyCentralImpulse(velocity)
-        }, 450)
+        }, 400)
       }
 
       if (keys.turnLeft) {
@@ -170,6 +170,7 @@ export class AmmoCharacterControl {
 export class AmmoWorld extends EventDispatcher {
   constructor({ mode = 'auto' }) {
     super()
+    this.canRun = true
     this.clock = new Clock()
     this.fncs = []
     this.mode = mode
@@ -229,6 +230,10 @@ export class AmmoWorld extends EventDispatcher {
         if (!this.ready) {
           return
         }
+      }
+
+      if (!this.canRun) {
+        return
       }
 
       var deltaTime = this.clock.getDelta();

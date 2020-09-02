@@ -1,10 +1,11 @@
 import PhysicsFactoryClass from 'comlink-loader!./PhysicsAmmo.worker'
 import * as Comlink from 'comlink'
-import { BufferGeometry, Vector3 } from 'three'
+import { BufferGeometry, Vector3, Vector4 } from 'three'
 
 export class PhysicsAmmoInterface {
-  constructor (...props) {
-    this.props = props
+  constructor ({ mode = 'auto', onLoop }) {
+    this.mode = mode
+    this.onLoop = onLoop
     this.factory = new PhysicsFactoryClass()
     this.done = this.run()
     this.updateMeshMap = new Map()
@@ -13,19 +14,30 @@ export class PhysicsAmmoInterface {
     return this.done
   }
   async run () {
-    this.ammoWorld = await new this.factory.AmmoWorld(...this.props)
+    this.ammoWorld = await new this.factory.AmmoWorld({ mode: this.mode })
     await this.ammoWorld.waitForSetup()
-
     this.subscribe((updateMap) => {
-      for (let [uuid, update] of  updateMap.entries()) {
-        let mesh = this.updateMeshMap.get(uuid)
-        // console.log(update.position, update.quaternion)
-        if (update && mesh) {
-          mesh.position.copy(update.position)
-          mesh.quaternion.copy(update.quaternion)
+      this.updateMap = updateMap
+    })
+    this.onLoop(() => {
+      if (this.updateMap) {
+        let ent = this.updateMap.entries()
+        for (let [uuid, update] of ent) {
+          let mesh = this.updateMeshMap.get(uuid)
+          // console.log(update.position, update.quaternion)
+          if (update && mesh) {
+            mesh.position.lerp(update.position, 0.85)
+            mesh.quaternion.copy(update.quaternion)
+          }
+          // console.log(update.position, update.quaternion)
         }
-        // console.log(update.position, update.quaternion)
       }
+    })
+    window.addEventListener('focus', () => {
+      this.ammoWorld.canRun = true
+    })
+    window.addEventListener('blur', () => {
+      this.ammoWorld.canRun = false
     })
   }
   set ready (v) {

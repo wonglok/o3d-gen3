@@ -46,7 +46,6 @@ export default {
       this.rayplay = new RayPlay({ mounter: this.element, onResize: this.onResize, onLoop: this.onLoop, camera: this.camera, onClean: this.onClean })
     },
     async initWASM () {
-
       if (window.devicePixelRatio > 1) {
         this.lowerPixel = 0.75
       }
