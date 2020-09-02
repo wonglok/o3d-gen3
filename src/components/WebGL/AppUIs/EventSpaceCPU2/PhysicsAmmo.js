@@ -1,10 +1,8 @@
 import { Clock, EventDispatcher, Vector3, Matrix4, Quaternion, Object3D } from 'three'
 import { loadAmmo } from '../EventSpace/loadAmmo'
-/* global self */
-/* global Module */
 
-var Module = { TOTAL_MEMORY: 256*1024*1024 };
-self.importScripts('/ammo/ammo.wasm.js');
+// var Module = { TOTAL_MEMORY: 256*1024*1024 };
+// self.importScripts('/ammo/ammo.wasm.js');
 
 export class AmmoCharacterControl {
   constructor ({ base, size, uuid, position, quaternion }) {
@@ -374,7 +372,7 @@ export class AmmoWorld extends EventDispatcher {
     }
   }
   close () {
-    close()
-    console.log('terminated')
+    // close()
+    // console.log('terminated')
   }
 }

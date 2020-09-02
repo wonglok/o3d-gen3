@@ -1,12 +1,12 @@
-import PhysicsFactoryClass from 'comlink-loader!./PhysicsAmmo.worker'
-import * as Comlink from 'comlink'
+import * as PhysicsFactoryClass from './PhysicsAmmo'
+// import * as Comlink from 'comlink'
 import { BufferGeometry, Vector3 } from 'three'
 
 export class PhysicsAmmoInterface {
   constructor ({ mode = 'auto', onLoop }) {
     this.mode = mode
     this.onLoop = onLoop
-    this.factory = new PhysicsFactoryClass()
+    this.factory = PhysicsFactoryClass
     this.done = this.run()
     this.updateMeshMap = new Map()
   }
@@ -29,7 +29,7 @@ export class PhysicsAmmoInterface {
           let mesh = this.updateMeshMap.get(uuid)
           // console.log(update.position, update.quaternion)
           if (update && mesh) {
-            mesh.position.lerp(update.position, 0.85)
+            mesh.position.copy(update.position)
             mesh.quaternion.copy(update.quaternion)
           }
           // console.log(update.position, update.quaternion)
@@ -56,7 +56,7 @@ export class PhysicsAmmoInterface {
     return this.ammoWorld
   }
   subscribe (v) {
-    this.ammoWorld.subscribe(Comlink.proxy(v))
+    this.ammoWorld.subscribe(v)
   }
   addUpdateItem (mesh) {
     this.updateMeshMap.set(mesh.uuid, mesh)
@@ -88,7 +88,7 @@ export class PhysicsAmmoInterface {
       scale: mesh.scale.toArray(),
       rootScale,
       mass,
-      array: Comlink.transfer(array, [array.buffer])
+      array: array
     })
   }
   async close () {
