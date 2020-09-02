@@ -62,16 +62,15 @@ import processFBX from 'comlink-loader!./processFBX.worker'
 
 let workerA = new processFBX();
 let workerB = new processFBX();
-let workerC = new processFBX();
-let workers = [workerA, workerB, workerC]
+let workers = [workerA, workerB]
 let i = 0
 
 let newOBJ = new ObjectLoader()
 export const loadFBX = async (url) => {
   LoadingManager.value += 0.9999
-
   let worker = workers[i % workers.length]
   i++
+
   let mockedFBX = await worker.getProcFBX(url)
   let parsed = newOBJ.parse(mockedFBX)
 
