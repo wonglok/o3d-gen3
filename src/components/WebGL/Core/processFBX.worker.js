@@ -55,7 +55,34 @@ var store = localforage.createInstance({
   name: 'localFBX'
 });
 
+
+var storeJSON = localforage.createInstance({
+  name: 'localFBXJSON'
+});
+
+export let provideJSON = async (url, store) => {
+  let NS = 'JSON-STORE-@' + url
+  try {
+    var value = await store.getItem(NS);
+    if (!value) {
+      let json = await makeJSON(url)
+      value = json
+      await store.setItem(NS, json)
+    }
+    // console.log(value)
+    return value
+  } catch (err) {
+    console.log(err)
+    await store.removeItem(NS)
+  }
+}
+
 export const getProcFBX = async (url) => {
+  let json = await provideJSON(url, storeJSON)
+  return json
+}
+
+export const makeJSON = async (url) => {
   let arrayBuffer = await provideArrayBuffer(url, store)
   // await rafSleep()
   let bloblURL = await getBlobFromArrayBuffer(arrayBuffer)
@@ -71,8 +98,8 @@ export const getProcFBX = async (url) => {
 
     return json
   } else {
-
     let json = gltfobj.toJSON()
+
     return json
   }
 }
