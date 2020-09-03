@@ -1,5 +1,5 @@
 import { Clock, EventDispatcher, Vector3, Matrix4, Quaternion, Object3D } from 'three'
-import { loadAmmo } from '../EventSpace/loadAmmo'
+import { loadAmmo } from './loadAmmo'
 
 // var Module = { TOTAL_MEMORY: 256*1024*1024 };
 // self.importScripts('/ammo/ammo.wasm.js');
