@@ -60,22 +60,26 @@ export const sleep = (t) => new Promise((resolve) => { setTimeout(resolve, t) })
 //   name: 'localFBX'
 // });
 
-let workerA = new processFBX();
-let workerB = new processFBX();
-let workers = [workerA, workerB]
+let workers = [
+  new processFBX(),
+  new processFBX(),
+  new processFBX(),
+  new processFBX()
+]
 let i = 0
 
 let newOBJ = new ObjectLoader()
 export const loadFBX = async (url) => {
-  LoadingManager.value += 0.9999
+  LoadingManager.value += 1
   let worker = workers[i % workers.length]
   i++
 
   let mockedFBX = await worker.getProcFBX(url)
+  await sleep()
   let parsed = newOBJ.parse(mockedFBX)
   await sleep()
 
-  LoadingManager.value -= 0.9999
+  LoadingManager.value -= 1
   return parsed
 }
 

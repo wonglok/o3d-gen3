@@ -15,6 +15,7 @@ import { PCamera } from '../../Core/PCamera'
 import { RayPlay } from '../../Core/RayPlay'
 import { PhysicsAmmoInterface } from './PhysicsAmmoInterface'
 import { ShaderCubeChromatics } from '../../Packages/Materials/ShaderCubeChromatics'
+
 export default {
   mixins:[
     RenderRoot
@@ -42,18 +43,20 @@ export default {
     },
     async initSystem () {
       this.ammo = new PhysicsAmmoInterface({ mode: 'manual', onLoop: this.onLoop })
+
       await this.ammo.waitForSetup()
 
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, onLoop: this.onLoop, res: 128, color: new Color('#ffffff') })
 
       let sphere = new TorusBufferGeometry(20, 4.1, 15, 145)
+
       let fallingBox = () => {
         // falling box
         let mat = new MeshBasicMaterial({ color: new Color('#ffffff'), wireframe: false, envMap: chroma.out.envMap })
         let mesh = new Mesh(sphere, mat)
-        mesh.position.y = 150
-        mesh.position.z = (Math.random() - 0.5) * -500
-        mesh.position.x = (Math.random() - 0.5) * -500
+        mesh.position.y = 100
+        mesh.position.z = (Math.random() - 0.5) * -750
+        mesh.position.x = (Math.random() - 0.5) * -750
 
         this.o3d.add(mesh)
 
@@ -63,6 +66,7 @@ export default {
           rootScale: 1
         })
       }
+
       for (let i = 0; i < 10; i++) {
         fallingBox()
       }
@@ -71,7 +75,6 @@ export default {
       //   let geo = new BoxGeometry(1500, 1, 1500, 5, 5, 5)
       //   let mat = new MeshBasicMaterial({ color: 0x0000ff, wireframe: true })
       //   let mesh = new Mesh(geo, mat)
-
       //   this.o3d.add(mesh)
       //   this.ammo.addMesh({
       //     mesh,
@@ -84,15 +87,12 @@ export default {
       let makeFactory = async () => {
         let RoomFactory = require('./RoomFactory.js').RoomFactory
         let room = new RoomFactory({ o3d: this.o3d, addMesh: v => this.ammo.addMesh(v) })
+        let birthPlace = room.birthPlace
         this.camera.position.fromArray(room.birthPlace)
 
         await room.waitForSetup()
         // this.camera.lookAt(new Vector3().fromArray(room.birthPlace))
 
-        makeChar({ birthPlace: room.birthPlace })
-      }
-
-      let makeChar = async ({ birthPlace }) => {
         let EventChar = require('./EventChar.js').EventChar
         let eventChar = new EventChar({
           ammo: this.ammo,
@@ -118,6 +118,7 @@ export default {
 
         this.ammo.ready = true
       }
+
       makeFactory()
     }
   },

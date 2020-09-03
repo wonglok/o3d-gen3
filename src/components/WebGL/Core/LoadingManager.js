@@ -38,7 +38,7 @@ class ValueDamper {
 }
 
 let LoadingProgress = new ValueDamper(0)
-
+DLM.progress = LoadingProgress
 DLM.onURL = (url, progress) => {
   let { itemsLoaded, itemsTotal } = DLM.stat
   let overallProgressDetailed = itemsLoaded / itemsTotal + progress / itemsTotal

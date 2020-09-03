@@ -6,23 +6,20 @@ export class PhysicsAmmoInterface {
   constructor ({ mode = 'auto', onLoop }) {
     this.mode = mode
     this.onLoop = onLoop
-    this.factory = PhysicsFactoryClass
     this.done = this.run()
     this.updateMeshMap = new Map()
+    this.bufferGeoMap = new Map()
   }
   async waitForSetup () {
     return this.done
   }
   async run () {
-    this.ammoWorld = await new this.factory.AmmoWorld({ mode: this.mode, onLoop: this.onLoop })
+    this.ammoWorld = await new PhysicsFactoryClass.AmmoWorld({ mode: this.mode, onLoop: this.onLoop })
+
     await this.ammoWorld.waitForSetup()
+
     this.subscribe((updateMap) => {
       this.updateMap = updateMap
-    })
-    this.onLoop(() => {
-      // this.ammoWorld.exec().then(v => {
-      //   this.updateMap = v
-      // })
 
       if (this.updateMap) {
         let ent = this.updateMap.entries()
@@ -37,6 +34,13 @@ export class PhysicsAmmoInterface {
         }
       }
     })
+
+    // this.onLoop(() => {
+    //   // this.ammoWorld.exec().then(v => {
+    //   //   this.updateMap = v
+    //   // })
+    // })
+
     window.addEventListener('focus', () => {
       this.ammoWorld.canRun = true
     })
@@ -68,7 +72,13 @@ export class PhysicsAmmoInterface {
     let geometry = mesh.geometry
 
     if (!(geometry instanceof BufferGeometry)) {
-      geometry = new BufferGeometry().fromGeometry(geometry)
+      console.log(geometry)
+      if (!this.bufferGeoMap.has(mesh.geometry.uuid)) {
+        geometry = new BufferGeometry().fromGeometry(geometry)
+        this.bufferGeoMap.set(mesh.geometry.uuid, geometry)
+      } else {
+        geometry = this.bufferGeoMap.get(mesh.geometry.uuid)
+      }
     }
 
     let attributes = geometry.attributes
