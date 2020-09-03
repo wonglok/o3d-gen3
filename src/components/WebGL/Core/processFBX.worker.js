@@ -3,7 +3,7 @@ import { FBXLoader } from 'three/examples/jsm/loaders/FBXLoader'
 import { FileLoader, AnimationClip } from 'three'
 // import { LoadingManager } from './LoadingManager'
 
-// export const rafSleep = () => new Promise((resolve) => { window.requestAnimationFrame(resolve) })
+export const sleep = (t = 0) => new Promise((resolve) => { setTimeout(resolve, t) })
 
 let localforage = require('localforage')
 export let loadArrayBuffer = async (url) => {
@@ -60,20 +60,20 @@ var storeJSON = localforage.createInstance({
   name: 'localFBXJSON'
 });
 
-export let provideJSON = async (url, store) => {
+export let provideJSON = async (url, storeJSON) => {
   let NS = 'JSON-STORE-@' + url
   try {
-    var value = await store.getItem(NS);
+    var value = await storeJSON.getItem(NS);
     if (!value) {
       let json = await makeJSON(url)
       value = json
-      await store.setItem(NS, json)
+      await storeJSON.setItem(NS, json)
     }
     // console.log(value)
     return value
   } catch (err) {
     console.log(err)
-    await store.removeItem(NS)
+    await storeJSON.removeItem(NS)
   }
 }
 
@@ -84,10 +84,12 @@ export const getProcFBX = async (url) => {
 
 export const makeJSON = async (url) => {
   let arrayBuffer = await provideArrayBuffer(url, store)
-  // await rafSleep()
+  await sleep()
   let bloblURL = await getBlobFromArrayBuffer(arrayBuffer)
+  await sleep()
 
   let gltfobj = await modelParser(bloblURL)
+  await sleep()
 
   if (gltfobj.animations && gltfobj.animations.length > 0) {
     let json = gltfobj.toJSON()

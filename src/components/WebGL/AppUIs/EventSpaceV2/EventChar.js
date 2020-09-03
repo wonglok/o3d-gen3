@@ -460,12 +460,12 @@ export class CharActions {
       }
     }
 
-    let idle = standIdle
-    mixer.stopAllAction()
-    idle.repetitions = Infinity
-    idle.play()
+    let idle = this.base.moodType === 'peaceful' ? standIdle : mmaIdle
+    // mixer.stopAllAction()
+    // idle.repetitions = Infinity
+    // idle.play()
 
-    this.base.moodType = 'peaceful'
+    // this.base.moodType = 'fighting'
 
     let toggleFightMode = () => {
       let last = idle
@@ -496,6 +496,8 @@ export class CharActions {
       idle.crossFadeFrom(last, 0.3, true)
       idle.play()
     }
+    this.base.moodType = 'fighting'
+    toggleFightMode()
 
     this.base.addEventListener('toggle-fight', () => {
       toggleFightMode()
@@ -977,7 +979,7 @@ export class EventChar extends EventDispatcher {
       y: 20,
       z: 16 / 2,
     }
-    this.moodType = 'peaceful'
+    this.moodType = 'fighting'
     this.birthPlace = birthPlace
     // this.birthPlace = [126.0895767211914, 150, 364.65924072265625]
     // this.birthPlace = [0.0, 50, 0.0]

@@ -5,7 +5,7 @@ import { ObjectLoader } from 'three'
 import { LoadingManager } from './LoadingManager'
 import processFBX from 'comlink-loader!./processFBX.worker'
 
-// export const rafSleep = () => new Promise((resolve) => { window.requestAnimationFrame(resolve) })
+export const sleep = (t) => new Promise((resolve) => { setTimeout(resolve, t) })
 
 // let localforage = require('localforage')
 // let loadArrayBuffer = async (url) => {
@@ -73,6 +73,7 @@ export const loadFBX = async (url) => {
 
   let mockedFBX = await worker.getProcFBX(url)
   let parsed = newOBJ.parse(mockedFBX)
+  await sleep()
 
   LoadingManager.value -= 0.9999
   return parsed
