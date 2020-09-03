@@ -2,7 +2,7 @@
 import { ObjectLoader } from 'three'
 // import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader'
 // import { FileLoader } from 'three'
-import { LoadingManager } from './LoadingManager'
+// import { LoadingManager } from './LoadingManager'
 import processFBX from 'comlink-loader!./processFBX.worker'
 
 export const sleep = (t) => new Promise((resolve) => { setTimeout(resolve, t) })
@@ -62,15 +62,12 @@ export const sleep = (t) => new Promise((resolve) => { setTimeout(resolve, t) })
 
 let workers = [
   new processFBX(),
-  new processFBX(),
-  new processFBX(),
   new processFBX()
 ]
-let i = 0
 
+let i = 0
 let newOBJ = new ObjectLoader()
 export const loadFBX = async (url) => {
-  LoadingManager.value += 1
   let worker = workers[i % workers.length]
   i++
 
@@ -79,7 +76,6 @@ export const loadFBX = async (url) => {
   let parsed = newOBJ.parse(mockedFBX)
   await sleep()
 
-  LoadingManager.value -= 1
   return parsed
 }
 

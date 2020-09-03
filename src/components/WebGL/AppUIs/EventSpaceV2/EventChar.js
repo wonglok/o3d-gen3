@@ -1,4 +1,4 @@
-import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, PerspectiveCamera, Euler } from 'three'
+import { AnimationMixer, Clock, LinearEncoding, Object3D, EventDispatcher, Vector3, PerspectiveCamera, Euler, MeshLambertMaterial } from 'three'
 import { loadGLTF } from "../../Core/loadGLTF"
 import { getID } from '../../Core/O3DNode'
 import { loadFBX } from '../../Core/loadFBX.js'
@@ -883,8 +883,9 @@ export class Character {
     this.bones = {}
     this.mapCharBones({ actor })
     this.setupProperTextureEncoding({ actor })
-    if (this.base.chroma) {
-      this.setupChroma({ actor, chroma: this.base.chroma })
+
+    if (this.chroma && this.base.useCharacter === 'swat') {
+      this.setupChroma({ actor, chroma: this.chroma })
     }
     CharActions.preload()
 
@@ -969,9 +970,11 @@ export class Character {
 }
 
 export class EventChar extends EventDispatcher {
-  constructor ({ onLoop, onResize, birthPlace = [0, 250, 0], chroma, ammo }) {
+  constructor ({ onLoop, onResize, birthPlace = [0, 250, 0], chroma, ammo, useCharacter = 'glassman' }) {
     super({})
     this.ammo = ammo
+
+    this.useCharacter = useCharacter
 
     this.chroma = chroma
     this.size = {
@@ -991,18 +994,42 @@ export class EventChar extends EventDispatcher {
 
     this.doneCharGLB = this.setup()
   }
-  async setup () {
-    this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+  async loadChar () {
+    if (this.useCharacter === 'glassman') {
+      this.glb = await loadGLTF(require('file-loader!./char/glassman.glb'))
+      this.glb.scene.rotation.x += Math.PI * 0.05
+      this.glb.scene.rotation.y += Math.PI * 0.03
+      this.glb.scene.traverse(item => {
+        if (item.isMesh) {
+          let envMap = undefined
+          if (this.chroma) {
+            envMap = this.chroma.out.envMap
+          }
+          item.material = new MeshLambertMaterial({ skinning: true, flatShading: true, envMap })
+        }
+      })
+    } else if (this.useCharacter === 'swat') {
+      this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
+    } else if (this.useCharacter === 'suzie') {
+      this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
+    }
+
+    // this.glb = await loadGLTF(require('file-loader!./char/swat.glb'))
     // this.glb = await loadGLTF(require('file-loader!./char/suzie.glb'))
-    this.scene = this.glb.scene
+    this.scene = new Object3D()
+    this.scene.add(this.glb.scene)
     this.scene.position.y = (this.size.y * -1) + (this.size.x * -0.5) + this.size.y * 0.3
     this.o3d.add(this.scene)
-
     this.character = new Character({ actor: this.scene, base: this })
-    // this.control = new CharacterControl({ base: this })
+  }
+  async setup () {
     this.o3d.position.fromArray(this.birthPlace)
     this.o3d.rotation.y = Math.PI
     this.o3d.name = 'character'
+
+    if (this.useCharacter) {
+      await this.loadChar()
+    }
 
     let uuid = this.o3d.uuid
     let position = this.o3d.position.toArray()

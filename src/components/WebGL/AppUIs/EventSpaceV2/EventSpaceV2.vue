@@ -15,6 +15,7 @@ import { PCamera } from '../../Core/PCamera'
 import { RayPlay } from '../../Core/RayPlay'
 import { PhysicsAmmoInterface } from './PhysicsAmmoInterface'
 import { ShaderCubeChromatics } from '../../Packages/Materials/ShaderCubeChromatics'
+// import { ShaderCubeToy } from '../../Packages/Materials/ShaderCubeToy'
 
 export default {
   mixins:[
@@ -45,6 +46,10 @@ export default {
       this.ammo = new PhysicsAmmoInterface({ mode: 'manual', onLoop: this.onLoop })
 
       await this.ammo.waitForSetup()
+
+      // ShaderCubeToy
+
+      // let chroma = new ShaderCubeToy({ size: 128, renderer: this.ctx.renderer, onLoop: this.onLoop })
 
       let chroma = new ShaderCubeChromatics({ renderer: this.ctx.renderer, onLoop: this.onLoop, res: 128, color: new Color('#ffffff') })
 
@@ -89,8 +94,9 @@ export default {
         let room = new RoomFactory({ o3d: this.o3d, addMesh: v => this.ammo.addMesh(v) })
         let birthPlace = room.birthPlace
         this.camera.position.fromArray(room.birthPlace)
-
+        this.camera.position.y += 100
         await room.waitForSetup()
+
         // this.camera.lookAt(new Vector3().fromArray(room.birthPlace))
 
         let EventChar = require('./EventChar.js').EventChar
@@ -99,8 +105,10 @@ export default {
           onLoop: this.onLoop,
           onResize: this.onResize,
           birthPlace,
+          useCharacter: 'glassman',
           chroma
         })
+
         this.game = eventChar
 
         await eventChar.waitForSetup()
@@ -115,7 +123,6 @@ export default {
           element: this.ctx.renderer.domElement,
           onClean: this.onClean
         })
-
         this.ammo.ready = true
       }
 
